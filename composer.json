@@ -1,0 +1,30 @@
+{
+    "extra": {
+        "google/apiclient-services": [
+            "Gmail"
+        ]
+    },
+    "name": "toggenation/gmail-email-send",
+    "description": "GmailEmailSend plugin for CakePHP",
+    "type": "cakephp-plugin",
+    "license": "MIT",
+    "require": {
+        "php": ">=8.1",
+        "cakephp/cakephp": "^5.0.1",
+        "google/apiclient": "^2.15"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^10.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "GmailEmailSend\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "GmailEmailSend\\Test\\": "tests/",
+            "Cake\\Test\\": "vendor/cakephp/cakephp/tests/"
+        }
+    }
+}
