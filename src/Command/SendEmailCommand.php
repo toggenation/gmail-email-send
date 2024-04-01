@@ -52,8 +52,8 @@ class SendEmailCommand extends Command
             ->setSubject('Test of the Gmail Send XOAUTH2 ' . Chronos::now('Australia/Melbourne')->toAtomString())
             ->setTransport(new GmailApiTransport(['username' => 'jmcd1973@gmail.com']))
             ->viewBuilder()
-            ->setTemplate('gmail_api')
-            ->setLayout('gmail_api')
+            ->setTemplate('GmailEmailSend.gmail_api_template')
+            ->setLayout('GmailEmailSend.gmail_api_layout')
             ->setVars([
                 'one' => 'One var',
                 'two' => 'Two var',
