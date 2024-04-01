@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 
 namespace GmailEmailSend;
@@ -43,12 +42,17 @@ class GmailEmailSendPlugin extends BasePlugin
         $routes->plugin(
             'GmailEmailSend',
             ['path' => '/gmail'],
-            function (RouteBuilder $builder) {
+            function (RouteBuilder $builder): void {
                 // Add custom routes here
-                $builder->connect('/{controller}');
+                $builder->connect('/', ['controller' => 'Auth']);
+                $builder->connect(
+                    '/view/{id}',
+                    ['controller' => 'Auth', 'action' => 'view'],
+                    ['id' => '\d+', 'pass' => ['id']]
+                );
                 $builder->connect('/get-token', ['controller' => 'Auth', 'action' => 'getToken']);
                 $builder->connect('/code', ['controller' => 'Auth', 'action' => 'code']);
-                $builder->connect('/view', ['controller' => 'Auth', 'action' => 'view']);
+
                 $builder->fallbacks();
             }
         );

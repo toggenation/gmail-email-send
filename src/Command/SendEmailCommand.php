@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 
 namespace GmailEmailSend\Command;
@@ -42,7 +41,7 @@ class SendEmailCommand extends Command
     public function execute(Arguments $args, ConsoleIo $io)
     {
         $mailer = new Mailer([
-            'log' => true
+            'log' => true,
         ]);
 
         $mailer->setEmailFormat('html')
@@ -58,7 +57,6 @@ class SendEmailCommand extends Command
                 'one' => 'One var',
                 'two' => 'Two var',
             ]);
-
 
         /**
          * @var array{headers: string, message: string}

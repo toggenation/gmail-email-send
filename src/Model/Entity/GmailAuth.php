@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 
 namespace GmailEmailSend\Model\Entity;
@@ -38,6 +37,6 @@ class GmailAuth extends Entity
      */
     protected array $_hidden = [
         'token',
-        'credentials'
+        'credentials',
     ];
 }

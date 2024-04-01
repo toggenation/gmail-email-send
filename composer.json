@@ -14,7 +14,8 @@
         "google/apiclient": "^2.15"
     },
     "require-dev": {
-        "phpunit/phpunit": "^10.1"
+        "phpunit/phpunit": "^10.1",
+        "cakephp/cakephp-codesniffer": "^5.0"
     },
     "autoload": {
         "psr-4": {
@@ -25,6 +26,11 @@
         "psr-4": {
             "GmailEmailSend\\Test\\": "tests/",
             "Cake\\Test\\": "vendor/cakephp/cakephp/tests/"
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
         }
     }
 }

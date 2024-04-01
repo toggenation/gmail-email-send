@@ -52,7 +52,6 @@ When you have consented and been redirected back to http://locahost:8765/gmail/c
 Example of using the mail send ability
 
 ```php
-
         $mailer = new Mailer([
             'log' => true
         ]);

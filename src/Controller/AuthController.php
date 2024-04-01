@@ -1,23 +1,31 @@
 <?php
-
 declare(strict_types=1);
 
 namespace GmailEmailSend\Controller;
 
-use Cake\Core\Configure;
 use Cake\Core\Exception\CakeException;
+use Cake\Datasource\ModelAwareTrait;
 use Cake\Log\LogTrait;
-use Cake\Utility\Security;
-use Exception;
+use GmailEmailSend\Service\Traits\DbFieldEncryptionTrait;
 use Google\Client;
 use Google\Service\Gmail;
+use Throwable;
 
 /**
  * Code Controller
  */
 class AuthController extends AppController
 {
+    use ModelAwareTrait;
+
+    public function initialize(): void
+    {
+        parent::initialize();
+    }
+
     use LogTrait;
+    use DbFieldEncryptionTrait;
+
     /**
      * Index method
      *
@@ -25,36 +33,43 @@ class AuthController extends AppController
      */
     public function index()
     {
+        $table = $this->fetchTable('GmailEmailSend.GmailAuth');
 
-        // http://127.0.0.1:8080/getToken.php?code=4/0AeaYSHDjt5X-9rj0E_3N59gPfXHha16tcOwtk7WLdKWtj8IESOViYikwqvdtQ2LpS3jG-Q&scope=https://www.googleapis.com/auth/gmail.compose%20https://www.googleapis.com/auth/gmail.addons.current.action.compose%20https://www.googleapis.com/auth/gmail.send
-        $params = $this->request->getQueryParams() + [
-            'code' => '- not available -',
-            'scope' => '- not available -'
-        ];
+        $auth = $table->find('all');
 
-        $this->set(compact('params'));
+        $authRecords = $this->paginate($auth);
+
+        $this->set(compact('authRecords'));
     }
 
-    public function view()
+    public function delete($id = null)
+    {
+        $this->request->allowMethod('POST');
+
+        $table = $this->fetchTable('GmailAuth');
+
+        $gmailAuth = $table->get($id);
+
+        if ($table->delete($gmailAuth)) {
+            $this->Flash->success(__('Successfully deleted {0}', $gmailAuth->email));
+        } else {
+            $this->Flash->error(__('Could not delete {0}', $gmailAuth->email));
+        }
+
+        return $this->redirect(['action' => 'index']);
+    }
+
+    public function view($id = null)
     {
         $table = $this->fetchTable('GmailEmailSend.GmailAuth');
-        $entity = $table->get(1);
-        // $stream = stream_get_contents($entity->credentials);
-        // $encrypted = Security::encrypt(json_encode(['hi' => 'james']), Configure::read('Security.CLIENT_SECRET_KEY'));
-        // dd(Security::decrypt($encrypted, Configure::read('Security.CLIENT_SECRET_KEY')));
-        // dd(json_decode(Security::decrypt($stream, Configure::read('Security.CLIENT_SECRET_KEY')), true));
 
-        // $entity->credentials = $encrypted;
+        $entity = $table->get($id);
 
-        // $table->save($entity);
+        $decrypted = $this->decrypt($entity->credentials);
 
-        // $entity = $table->get(1);
+        $token =  $this->decrypt($entity->token);
 
-        $decrypted = json_decode(Security::decrypt(stream_get_contents($entity->credentials), Configure::read('Security.CLIENT_SECRET_KEY')), true);
-
-        $token = json_decode(Security::decrypt(stream_get_contents($entity->token), Configure::read('Security.CLIENT_SECRET_KEY')), true);
-
-        dd([$decrypted, $token]);
+        dd(json_encode([$decrypted, $token], JSON_PRETTY_PRINT));
     }
 
     public function code()
@@ -68,13 +83,7 @@ class AuthController extends AppController
          */
         $gmailUser = $table->get($params['state']);
 
-        $decrypted = json_decode(
-            Security::decrypt(
-                stream_get_contents($gmailUser->credentials),
-                Configure::read('Security.CLIENT_SECRET_KEY')
-            ),
-            true
-        );
+        $decrypted = $this->decrypt($gmailUser->credentials);
 
         $client = new Client();
 
@@ -99,22 +108,17 @@ class AuthController extends AppController
             throw new CakeException(join(', ', $accessToken));
         }
 
-
         /**
          * @var \GmailEmailSend\Model\Entity\GmailAuth $gmailUser
          */
         $gmailUser = $table->get($params['state']);
 
-        $gmailUser->token = Security::encrypt(
-            json_encode($client->getAccessToken()),
-            Configure::read('Security.CLIENT_SECRET_KEY')
-        );
+        $gmailUser->token = $this->encrypt($client->getAccessToken());
 
         $table->save($gmailUser);
 
         $this->set(compact('params'));
     }
-
 
     public function getToken()
     {
@@ -128,8 +132,7 @@ class AuthController extends AppController
             $credentials = $this->request->getData('credentials');
 
             if ($credentials->getError() !== 0) {
-
-                $this->Flash->error("You need to upload a client_secret*.json file");
+                $this->Flash->error('You need to upload a client_secret*.json file');
 
                 return $this->redirect(['action' => 'getToken']);
             }
@@ -139,7 +142,6 @@ class AuthController extends AppController
                 true
             );
 
-
             $table = $this->fetchTable('GmailEmailSend.GmailAuth');
 
             $validator = $table->getValidator('ClientSecret');
@@ -148,10 +150,11 @@ class AuthController extends AppController
 
             if ($errors) {
                 $this->Flash->error('Credentials invalid: ' . print_r($errors, true));
+
                 return $this->redirect(['action' => 'getToken']);
             }
 
-            $encrypted = Security::encrypt(json_encode($credentialContents), Configure::read('Security.CLIENT_SECRET_KEY'));
+            $encrypted = $this->encrypt($credentialContents);
 
             $this->Flash->success('Credentials Valid');
 
@@ -161,7 +164,7 @@ class AuthController extends AppController
                 $entity = $table->find()
                     ->where(['email' => $data['email']])
                     ->firstOrFail();
-            } catch (\Throwable $e) {
+            } catch (Throwable $e) {
                 $entity = $table->newEntity($data);
             }
 

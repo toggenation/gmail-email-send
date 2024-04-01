@@ -1,10 +1,8 @@
 <?php
-
 declare(strict_types=1);
 
 namespace GmailEmailSend\Model\Table;
 
-use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
@@ -60,24 +58,22 @@ class GmailAuthTable extends Table
         return $validator;
     }
 
-
     public function validationClientSecret(Validator $validator): Validator
     {
         $clientIdValidator = new Validator();
 
-        $clientIdValidator->notEmptyString("client_id")
-            ->notEmptyString("project_id")
-            ->notEmptyString("auth_uri")
-            ->notEmptyString("token_uri")
-            ->notEmptyString("auth_provider_x509_cert_url")
-            ->notEmptyString("client_secret")
-            ->notEmptyArray("redirect_uris");
+        $clientIdValidator->notEmptyString('client_id')
+            ->notEmptyString('project_id')
+            ->notEmptyString('auth_uri')
+            ->notEmptyString('token_uri')
+            ->notEmptyString('auth_provider_x509_cert_url')
+            ->notEmptyString('client_secret')
+            ->notEmptyArray('redirect_uris');
 
         $validator->addNested('web', $clientIdValidator);
 
         return $validator;
     }
-
 
     public function buildRules(RulesChecker $rules): RulesChecker
     {

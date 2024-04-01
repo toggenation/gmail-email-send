@@ -1,34 +1,30 @@
 <?php
-
 declare(strict_types=1);
 
 namespace GmailEmailSend\Mailer\Transport;
 
-use BadMethodCallException;
-use Cake\Core\Configure;
 use Cake\Core\Exception\CakeException;
-use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\Mailer\Message;
 use Cake\Mailer\Transport\SmtpTransport;
 use Cake\ORM\Locator\LocatorAwareTrait;
-use Cake\Utility\Security;
 use Exception;
 use GmailEmailSend\Model\Table\GmailAuthTable;
+use GmailEmailSend\Service\Traits\DbFieldEncryptionTrait;
 use Google\Client;
 use Google\Service\Gmail;
 use Google\Service\Gmail\Message as GmailMessage;
-use InvalidArgumentException;
 
 class GmailApiTransport extends SmtpTransport
 {
     use LocatorAwareTrait;
+    use DbFieldEncryptionTrait;
 
     public string $gmailUser;
 
     public GmailAuthTable $table;
 
     protected array $_defaultConfig = [
-        'username' => 'jmcd1973@gmail.com'
+        'username' => 'jmcd1973@gmail.com',
     ];
 
     public function __construct($config = [])
@@ -38,6 +34,7 @@ class GmailApiTransport extends SmtpTransport
 
         $this->table = $this->fetchTable('GmailEmailSend.GmailAuth');
     }
+
     public function send(Message $message): array
     {
         $strMessage = $this->messageAsString($message);
@@ -63,19 +60,6 @@ class GmailApiTransport extends SmtpTransport
         $user = $this->getUser();
 
         return $this->decrypt($user->token);
-    }
-
-    protected function decrypt($encrypted): array
-    {
-        $result = json_decode(
-            Security::decrypt(
-                stream_get_contents($encrypted),
-                Configure::read('Security.CLIENT_SECRET_KEY')
-            ),
-            true
-        );
-
-        return $result;
     }
 
     protected function getUser()
@@ -138,11 +122,15 @@ class GmailApiTransport extends SmtpTransport
                 }
             }
             // Save the token to a file.
-            if (!file_exists(dirname($tokenPath))) {
-                mkdir(dirname($tokenPath), 0700, true);
-            }
 
-            file_put_contents($tokenPath, json_encode($client->getAccessToken()));
+            $table = $this->fetchTable('GmailEmailSend.GmailAuth');
+            $user = $table->find()
+                ->where(['email' => $this->getConfig('username')])
+                ->firstOrFail();
+
+            $user->token = $this->encrypt($client->getAccessToken());
+
+            $table->save($user);
         }
 
         return $client;
