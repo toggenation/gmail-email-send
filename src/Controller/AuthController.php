@@ -107,11 +107,7 @@ class AuthController extends AppController
 
         $client->setAuthConfig($decrypted);
 
-        $this->log(print_r($params, true));
-
         $accessToken = $client->fetchAccessTokenWithAuthCode($params['code']);
-
-        $this->log(print_r($accessToken, true));
 
         $client->setAccessToken($accessToken);
 

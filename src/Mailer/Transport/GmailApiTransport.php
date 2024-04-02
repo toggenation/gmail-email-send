@@ -113,33 +113,20 @@ class GmailApiTransport extends SmtpTransport
             // Refresh the token if possible, else fetch a new one.
             if ($client->getRefreshToken()) {
                 $client->fetchAccessTokenWithRefreshToken($client->getRefreshToken());
+
+                $user = $this->table->find()
+                    ->where(['email' => $this->getConfig('username')])
+                    ->firstOrFail();
+
+                $user->token = $this->encrypt($client->getAccessToken());
+
+                if ($this->table->save($user) === false) {
+                    throw new Exception('Could not save updated token');
+                };
             } else {
-                // Request authorization from the user.
-                $authUrl = $client->createAuthUrl();
-                printf("Open the following link in your browser:\n%s\n", $authUrl);
-                print 'Enter verification code: ';
-                $authCode = trim(fgets(STDIN));
 
-                // Exchange authorization code for an access token.
-                $accessToken = $client->fetchAccessTokenWithAuthCode($authCode);
-
-                $client->setAccessToken($accessToken);
-
-                // Check to see if there was an error.
-                if (array_key_exists('error', $accessToken)) {
-                    throw new Exception(join(', ', $accessToken));
-                }
+                throw new CakeException('Could not refresh the access/refresh token non-interactively');
             }
-            // Save the token to a file.
-
-            $table = $this->fetchTable('GmailEmailSend.GmailAuth');
-            $user = $table->find()
-                ->where(['email' => $this->getConfig('username')])
-                ->firstOrFail();
-
-            $user->token = $this->encrypt($client->getAccessToken());
-
-            $table->save($user);
         }
 
         return $client;

@@ -6,9 +6,11 @@ This is an alpha repo. It is not ready for use
 
 On the Google Cloud Console you need to:
 
-1. Create a project and enable the Gmail Api
+1. Create a project
+2. Enable the Gmail Api
 2. Create an Oauth consent screen
-3. Create some Oauth Credentials. To use the default CakePHP dev server add `http://localhost:8765/gmail/code` as the redirectUrl
+3. Create some Oauth Credentials. 
+4. Add a redirectUrl for the default CakePHP dev server of `http://localhost:8765/gmail/code` as the redirectUrl
 4. Download the client_secrets*.json credentials file
 
 Install CakePHP 5.x+
@@ -61,7 +63,10 @@ Example of using the mail send ability
             ->addTo('jmcd1973@gmail.com', 'James Gmail 73')
             ->setFrom('jmcd1973@gmail.com', 'James 1973 Gmail')
             ->setSubject('Test of the Gmail Send XOAUTH2 ' . Chronos::now('Australia/Melbourne')->toAtomString())
-            ->setTransport(new GmailApiTransport(['username' => 'jmcd1973@gmail.com']))
+            // use configuration in app/app_local.php (see below)
+            ->setTransport('gmailApi')
+            // or 
+            // ->setTransport(new GmailApiTransport(['username' => 'jmcd1973@gmail.com']))
             ->viewBuilder()
             ->setTemplate('GmailEmailSend.gmail_api_template')
             ->setLayout('GmailEmailSend.gmail_api_layout')
@@ -75,6 +80,23 @@ Example of using the mail send ability
          * @var array{headers: string, message: string}
          */
         $message = $mailer->deliver();
+```
+
+
+```php
+    // app.php or app_local.php
+    use GmailEmailSend\Mailer\Transport\GmailApiTransport;
+
+    return [
+        //... 
+    'EmailTransport' => [
+            'gmailApi' => [
+                'className' => GmailApiTransport::class,
+                'username' => 'jmcd1973@gmail.com'
+            ]
+        ],
+        //...
+    ]
 ```
 
 

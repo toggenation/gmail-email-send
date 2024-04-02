@@ -50,7 +50,9 @@ class SendEmailCommand extends Command
             ->addTo('jmcd1973@gmail.com', 'James Gmail 73')
             ->setFrom('jmcd1973@gmail.com', 'James 1973 Gmail')
             ->setSubject('Test of the Gmail Send XOAUTH2 ' . Chronos::now('Australia/Melbourne')->toAtomString())
-            ->setTransport(new GmailApiTransport(['username' => 'jmcd1973@gmail.com']))
+            // config in app_local.php
+            ->setTransport('gmailApi')
+            // ->setTransport(new GmailApiTransport(['username' => 'jmcd1973@gmail.com']))
             ->viewBuilder()
             ->setTemplate('GmailEmailSend.gmail_api_template')
             ->setLayout('GmailEmailSend.gmail_api_layout')
