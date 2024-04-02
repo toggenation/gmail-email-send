@@ -6,8 +6,9 @@ namespace GmailEmailSend\Model\Table;
 
 use Cake\Database\Schema\TableSchemaInterface;
 use Cake\ORM\RulesChecker;
-use Cake\ORM\Table;
+
 use Cake\Validation\Validator;
+use GmailEmailSend\Orm\Table;
 
 /**
  * GmailAuth Model
@@ -43,12 +44,6 @@ class GmailAuthTable extends Table
         $this->setPrimaryKey('id');
 
         $this->addBehavior('Timestamp');
-    }
-
-    public function getSchema(): TableSchemaInterface
-    {
-        return parent::getSchema()->setColumnType('token', 'encrypted')
-            ->setColumnType('credentials', 'encrypted');
     }
 
     /**
