@@ -22,6 +22,9 @@ use Symfony\Component\Uid\Ulid;
 class AuthController extends AppController
 {
     use ErrorFormatterTrait;
+    use LogTrait;
+    use DbFieldEncryptionTrait;
+
 
     public GmailAuthTable $table;
 
@@ -38,8 +41,7 @@ class AuthController extends AppController
 
         $this->viewBuilder()->setLayout('GmailEmailSend.default');
     }
-    use LogTrait;
-    use DbFieldEncryptionTrait;
+
 
     /**
      * Index method

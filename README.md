@@ -1,6 +1,6 @@
 # GmailEmailSend plugin for CakePHP
 
-This is an alpha repo. It is not ready for use
+This is an alpha repo.
 
 ## Installation
 
@@ -19,9 +19,7 @@ Install CakePHP 5.x+
 composer create-project --prefer-dist cakephp/app:~5.0 gmail-oauth-send
 ```
 
-You can install this plugin into your CakePHP application using [composer](https://getcomposer.org).
-
-The recommended way to install composer packages hosted on Github is:
+Install this plugin into your CakePHP application using [composer](https://getcomposer.org).
 
 Add the following to `composer.json`
 
@@ -37,12 +35,12 @@ Add the following to `composer.json`
 ```sh
 composer require toggenation/gmail-email-send:dev-master
 
-// load the plugin
+// then load the plugin
 
 bin/cake plugin load GmailEmailSend
 ```
 
-Add the database and encryption config
+Add a database connection and the encryption config
 
 ```php
 // config/app_local.php
@@ -52,7 +50,7 @@ Add the database and encryption config
             'url' => env('DATABASE_URL', 'sqlite://127.0.0.1/tmp/default.sqlite'),
         ],
  'Security' => [
-        'salt' => env('SECURITY_SALT', 'ec3e8fa8b31a8f414fa1a704d209007a9c85406a126fe2910885826f2c6e4d2c'),
+        'salt' => env('SECURITY_SALT', 'ec3e8fa8b3fa8g414fa1a704d209007a9c85406a126fe2910885826f2c6e4d2c'),
         'CLIENT_SECRET_KEY' => '__SALT__'
     ],
 
@@ -68,7 +66,7 @@ composer run post-install-cmd
 // app_local.php after:
 
  'Security' => [
-        'salt' => env('SECURITY_SALT', 'ec3e8ff8b31a8f414fa1a704d209007a9c85406a126fe2910885826f2c6e4d2c'),
+        'salt' => env('SECURITY_SALT', 'ec3e8fa8b3fa8g414fa1a704d209007a9c85406a126fe2910885826f2c6e4d2c'),
         'CLIENT_SECRET_KEY' => '0f9b6b5b4fd473gda21ddceeb7d58722576388110f87a3e987791525a15bc41a'
     ],
 ```
@@ -115,14 +113,14 @@ bin/cake bake command Send
         ]);
 
          $mailer->setEmailFormat('html')
-            ->setTo('james@toggen.com.au', 'James McDonald')
-            ->addTo('jmcd1973@gmail.com', 'James Gmail 73')
-            ->setFrom('jmcd1973@gmail.com', 'James 1973 Gmail')
+            ->setTo('james@example.com', 'James McDonald')
+            ->addTo('jm1289899@gmail.com', 'James Gmail 73')
+            ->setFrom('jm1289899@gmail.com', 'James 1973 Gmail')
             ->setSubject('Test of the Gmail Send XOAUTH2 ' . Chronos::now('Australia/Melbourne')->toAtomString())
             // use configuration in app/app_local.php (see below)
             // ->setTransport('gmailApi')
             // or 
-            ->setTransport(new GmailApiTransport(['username' => 'jmcd1973@gmail.com']))
+            ->setTransport(new GmailApiTransport(['username' => 'jm1289899@gmail.com']))
             ->viewBuilder()
             ->setTemplate('GmailEmailSend.gmail_api_template')
             ->setLayout('GmailEmailSend.gmail_api_layout')
@@ -146,10 +144,8 @@ bin/cake bake command Send
 bin/cake send
 
 # output
-Message sent to james@toggen.com.au and jmcd1973@gmail.com
+Message sent to james@example.com and jm1289899@gmail.com
 ```
-
-
 
 ## Configure GmailApiTransport
 
@@ -162,12 +158,36 @@ Message sent to james@toggen.com.au and jmcd1973@gmail.com
     'EmailTransport' => [
             'gmailApi' => [
                 'className' => GmailApiTransport::class,
-                'username' => 'jmcd1973@gmail.com'
+                'username' => 'jm1289899@gmail.com'
             ]
         ],
         //...
     ]
 ```
 
+## Logging Emails
+
+```php
+
+ // configure Mailer in email sending code
+   $mailer = new Mailer([
+            'log' => true
+        ]);
+
+ // config/app.php
+
+ 'Log' => [
+        //add this
+        'email' => [
+            'className' => FileLog::class,
+            'path' => LOGS,
+            'levels' => [],
+            'scopes' => ['email'],
+            'file' => 'email',
+        ],
+
+// logs/email.log for headers and email body content
+
+```
 
 
