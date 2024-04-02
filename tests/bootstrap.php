@@ -1,5 +1,9 @@
 <?php
+
 declare(strict_types=1);
+
+use Migrations\TestSuite\Migrator;
+
 
 /**
  * Test suite bootstrap for GmailEmailSend.
@@ -49,7 +53,11 @@ if (file_exists($root . '/config/bootstrap.php')) {
  * using migrations to provide schema for your plugin,
  * and using \Migrations\TestSuite\Migrator to load schema.
  */
-use Cake\TestSuite\Fixture\SchemaLoader;
+// use Cake\TestSuite\Fixture\SchemaLoader;
 
 // Load a schema dump file.
-(new SchemaLoader())->loadSqlFiles('tests/schema.sql', 'test');
+// (new SchemaLoader())->loadSqlFiles('tests/schema.sql', 'test');
+
+$migrator = new Migrator();
+
+$migrator->run(['plugin' => 'GmailEmailSend']);

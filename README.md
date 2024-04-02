@@ -1,5 +1,7 @@
 # GmailEmailSend plugin for CakePHP
 
+This is a CakePHP Plugin that allows sending email via the Google API (Not SMTP)
+
 This is an alpha repo.
 
 ## Installation

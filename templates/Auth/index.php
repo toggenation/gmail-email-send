@@ -2,11 +2,10 @@
 
 /**
  * @var \App\View\AppView $this
- * @var iterable<\App\Model\Entity\GmailAuth> $gmailAuth
  */
 ?>
 <div class="gmailAuth index content">
-    <?= $this->Html->link(__('New Gmail Auth'), ['action' => 'get-token'], ['class' => 'button float-right']) ?>
+    <?= $this->Html->link(__('New Gmail Auth'), ['action' => 'getToken'], ['class' => 'button float-right']) ?>
     <h3><?= __('Gmail Auth') ?></h3>
     <div class="table-responsive">
         <table>
@@ -28,7 +27,9 @@
                         <td><?= h($gmailAuth->modified) ?></td>
                         <td class="actions">
                             <?= $this->Html->link(__('View'), ['action' => 'view', $gmailAuth->id]) ?>
-                            <?= $this->Html->link(__('Edit'), ['action' => 'changeCredentials', $gmailAuth->id]) ?>
+                            <?= $this->Html->link(__('Edit'), [
+                                'controller' => 'Auth', 'action' => 'changeCredentials', $gmailAuth->id
+                            ]) ?>
                             <?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $gmailAuth->id], ['confirm' => __('Are you sure you want to delete # {0}?', $gmailAuth->id)]) ?>
                         </td>
                     </tr>

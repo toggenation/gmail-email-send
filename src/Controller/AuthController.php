@@ -25,7 +25,6 @@ class AuthController extends AppController
     use LogTrait;
     use DbFieldEncryptionTrait;
 
-
     public GmailAuthTable $table;
 
     public function initialize(): void
@@ -41,7 +40,6 @@ class AuthController extends AppController
 
         $this->viewBuilder()->setLayout('GmailEmailSend.default');
     }
-
 
     /**
      * Index method
