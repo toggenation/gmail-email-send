@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace GmailEmailSend\Mailer\Transport;
@@ -29,10 +30,18 @@ class GmailApiTransport extends SmtpTransport
 
     public function __construct($config = [])
     {
+        parent::__construct($config);
 
         $this->gmailUser = $this->getConfig('username');
 
         $this->table = $this->fetchTable('GmailEmailSend.GmailAuth');
+    }
+
+    protected function validateUser()
+    {
+        $this->table->find()
+            ->where(['email' => $this->gmailUser])
+            ->firstOrFail();
     }
 
     public function send(Message $message): array

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace GmailEmailSend\Model\Entity;
@@ -28,6 +29,7 @@ class GmailAuth extends Entity
         'credentials' => true,
         'email' => true,
         'token' => true,
+        'state' => true
     ];
 
     /**

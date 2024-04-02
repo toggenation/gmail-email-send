@@ -1,14 +1,19 @@
 <?php
+
 declare(strict_types=1);
 
 namespace GmailEmailSend;
 
 use Cake\Console\CommandCollection;
 use Cake\Core\BasePlugin;
+use Cake\Core\Configure;
 use Cake\Core\ContainerInterface;
 use Cake\Core\PluginApplicationInterface;
 use Cake\Http\MiddlewareQueue;
+use Cake\Http\ServerRequest;
+use Cake\I18n\Middleware\LocaleSelectorMiddleware;
 use Cake\Routing\RouteBuilder;
+use GmailEmailSend\Service\GmailAuth;
 
 /**
  * Plugin for GmailEmailSend
@@ -69,6 +74,8 @@ class GmailEmailSendPlugin extends BasePlugin
     {
         // Add your middlewares here
 
+        $middlewareQueue->add(new LocaleSelectorMiddleware(['en_AU', 'en_US']));
+
         return $middlewareQueue;
     }
 
@@ -96,6 +103,12 @@ class GmailEmailSendPlugin extends BasePlugin
      */
     public function services(ContainerInterface $container): void
     {
+        $container->delegate(
+            new \League\Container\ReflectionContainer(Configure::read('debug'))
+        );
+
         // Add your services here
+        $container->add(GmailAuth::class)
+            ->addArgument(ServerRequest::class);
     }
 }

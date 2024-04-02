@@ -28,7 +28,7 @@
                         <td><?= h($gmailAuth->modified) ?></td>
                         <td class="actions">
                             <?= $this->Html->link(__('View'), ['action' => 'view', $gmailAuth->id]) ?>
-                            <?= $this->Html->link(__('Edit'), ['action' => 'get-token', $gmailAuth->id]) ?>
+                            <?= $this->Html->link(__('Edit'), ['action' => 'changeCredentials', $gmailAuth->id]) ?>
                             <?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $gmailAuth->id], ['confirm' => __('Are you sure you want to delete # {0}?', $gmailAuth->id)]) ?>
                         </td>
                     </tr>

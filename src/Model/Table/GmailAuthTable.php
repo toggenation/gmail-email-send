@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace GmailEmailSend\Model\Table;
@@ -39,6 +40,8 @@ class GmailAuthTable extends Table
         $this->setTable('gmail_auth');
         $this->setDisplayField('id');
         $this->setPrimaryKey('id');
+
+        $this->addBehavior('Timestamp');
     }
 
     /**
@@ -62,7 +65,15 @@ class GmailAuthTable extends Table
     {
         $clientIdValidator = new Validator();
 
-        $clientIdValidator->notEmptyString('client_id')
+        $clientIdValidator
+            ->requirePresence('client_id')
+            ->requirePresence('project_id')
+            ->requirePresence('auth_uri')
+            ->requirePresence('token_uri')
+            ->requirePresence('auth_provider_x509_cert_url')
+            ->requirePresence('client_secret')
+            ->requirePresence('redirect_uris')
+            ->notEmptyString('client_id')
             ->notEmptyString('project_id')
             ->notEmptyString('auth_uri')
             ->notEmptyString('token_uri')
@@ -70,7 +81,8 @@ class GmailAuthTable extends Table
             ->notEmptyString('client_secret')
             ->notEmptyArray('redirect_uris');
 
-        $validator->addNested('web', $clientIdValidator);
+        $validator->requirePresence('web', message: 'Not a valid client_secret*.json file. The `web\' property is missing')
+            ->addNested('web', $clientIdValidator);
 
         return $validator;
     }
