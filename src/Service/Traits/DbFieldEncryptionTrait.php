@@ -9,6 +9,7 @@ use Cake\Utility\Security;
 
 trait DbFieldEncryptionTrait
 {
+
     public function encrypt($unencrypted)
     {
         return Security::encrypt(
@@ -25,7 +26,7 @@ trait DbFieldEncryptionTrait
 
         return json_decode(
             Security::decrypt(
-                stream_get_contents($encrypted),
+                $encrypted,
                 Configure::read('Security.CLIENT_SECRET_KEY')
             ),
             true

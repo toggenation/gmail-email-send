@@ -45,14 +45,16 @@ class SendEmailCommand extends Command
             'log' => true,
         ]);
 
+        $sender = ['jamesmcd73@gmail.com', 'James McDonald 73'];
+
         $mailer->setEmailFormat('html')
             ->setTo('james@toggen.com.au', 'James McDonald')
-            ->addTo('jmcd1973@gmail.com', 'James Gmail 73')
-            ->setFrom('jmcd1973@gmail.com', 'James 1973 Gmail')
+            ->addTo('jmcd1973@gmail.com', 'James Gmail 1973')
+            ->setFrom(...$sender)
             ->setSubject('Test of the Gmail Send XOAUTH2 ' . Chronos::now('Australia/Melbourne')->toAtomString())
             // config in app_local.php
-            ->setTransport('gmailApi')
-            // ->setTransport(new GmailApiTransport(['username' => 'jmcd1973@gmail.com']))
+            // ->setTransport('gmailApi')
+            ->setTransport(new GmailApiTransport(['username' => $sender[0]]))
             ->viewBuilder()
             ->setTemplate('GmailEmailSend.gmail_api_template')
             ->setLayout('GmailEmailSend.gmail_api_layout')

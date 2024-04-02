@@ -23,7 +23,7 @@ class AuthController extends AppController
 {
     use ErrorFormatterTrait;
     use LogTrait;
-    use DbFieldEncryptionTrait;
+    // use DbFieldEncryptionTrait;
 
     public GmailAuthTable $table;
 
@@ -74,9 +74,9 @@ class AuthController extends AppController
     {
         $entity = $this->table->get($id);
 
-        $client_secret = $this->decrypt($entity->credentials);
+        $client_secret = $entity->credentials;
 
-        $access_token =  $this->decrypt($entity->token);
+        $access_token =  $entity->token;
 
         // dd(json_encode([$decrypted, $token], JSON_PRETTY_PRINT));
 
@@ -95,7 +95,7 @@ class AuthController extends AppController
             ->where(['state' => $params['state']])
             ->firstOrFail();
 
-        $decrypted = $this->decrypt($gmailUser->credentials);
+        $decrypted = $gmailUser->credentials;
 
         $client = new Client();
 
@@ -123,7 +123,7 @@ class AuthController extends AppController
             ->where(['state' => $params['state']])
             ->firstOrFail();
 
-        $gmailUser->token = $this->encrypt($client->getAccessToken());
+        $gmailUser->token = $client->getAccessToken();
 
         $this->table->save($gmailUser);
 
@@ -156,9 +156,8 @@ class AuthController extends AppController
 
             $entity = $this->table->patchEntity($entity, $data);
 
-            $entity->credentials =  $this->encrypt(
-                $credentialContents
-            );
+            $entity->credentials =
+                $credentialContents;
 
             if ($this->table->save($entity)) {
                 // $this->Flash->success('Saved!');
@@ -217,9 +216,8 @@ class AuthController extends AppController
 
             $entity = $this->table->patchEntity($entity, $data);
 
-            $entity->credentials =  $this->encrypt(
-                $credentialContents
-            );
+            $entity->credentials =
+                $credentialContents;
 
             $entity->state = Ulid::generate();
 

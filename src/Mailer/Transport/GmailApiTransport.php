@@ -68,7 +68,7 @@ class GmailApiTransport extends SmtpTransport
     {
         $user = $this->getUser();
 
-        return $this->decrypt($user->token);
+        return $user->token;
     }
 
     protected function getUser()
@@ -82,7 +82,7 @@ class GmailApiTransport extends SmtpTransport
     {
         $user = $this->getUser();
 
-        return $this->decrypt($user->credentials);
+        return $user->credentials;
     }
 
     protected function getClient()

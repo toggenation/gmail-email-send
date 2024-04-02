@@ -9,10 +9,12 @@ use Cake\Core\BasePlugin;
 use Cake\Core\Configure;
 use Cake\Core\ContainerInterface;
 use Cake\Core\PluginApplicationInterface;
+use Cake\Database\TypeFactory;
 use Cake\Http\MiddlewareQueue;
 use Cake\Http\ServerRequest;
 use Cake\I18n\Middleware\LocaleSelectorMiddleware;
 use Cake\Routing\RouteBuilder;
+use GmailEmailSend\Database\Type\EncryptedType;
 use GmailEmailSend\Service\GmailAuth;
 
 /**
@@ -31,6 +33,7 @@ class GmailEmailSendPlugin extends BasePlugin
      */
     public function bootstrap(PluginApplicationInterface $app): void
     {
+        TypeFactory::map('encrypted', EncryptedType::class);
     }
 
     /**
