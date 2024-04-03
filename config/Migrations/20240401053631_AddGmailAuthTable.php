@@ -16,10 +16,16 @@ class AddGmailAuthTable extends AbstractMigration
     public function change(): void
     {
         $this->table('gmail_auth')
-            ->addColumn('credentials', 'binary', ['default' => null])
+            ->addColumn('credentials', 'binary', [
+                'limit' => 1024,
+                'default' => null
+            ])
             ->addColumn('email', 'string')
             ->addColumn('state', 'string', ['default' => null])
-            ->addColumn('token', 'binary', ['default' => null])
+            ->addColumn('token', 'binary', [
+                'limit' => 1024,
+                'default' => null
+            ])
             ->addIndex('email', ['unique' => true])
             ->addTimestampsWithTimezone('created', 'modified')
             ->create();

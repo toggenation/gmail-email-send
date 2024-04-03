@@ -45,7 +45,7 @@ class SendEmailCommand extends Command
             'log' => true,
         ]);
 
-        $sender = ['jamesmcd73@gmail.com', 'James McDonald 73'];
+        $sender = ['jmcd1973@gmail.com', 'James McDonald 1973'];
 
         $mailer->setEmailFormat('html')
             ->setTo('james@toggen.com.au', 'James McDonald')
