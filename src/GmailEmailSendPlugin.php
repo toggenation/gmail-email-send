@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 
 namespace GmailEmailSend;
@@ -16,6 +15,7 @@ use Cake\I18n\Middleware\LocaleSelectorMiddleware;
 use Cake\Routing\RouteBuilder;
 use GmailEmailSend\Database\Type\EncryptedType;
 use GmailEmailSend\Service\GmailAuth;
+use League\Container\ReflectionContainer;
 
 /**
  * Plugin for GmailEmailSend
@@ -124,7 +124,7 @@ class GmailEmailSendPlugin extends BasePlugin
     public function services(ContainerInterface $container): void
     {
         $container->delegate(
-            new \League\Container\ReflectionContainer(Configure::read('debug'))
+            new ReflectionContainer(Configure::read('debug'))
         );
 
         // Add your services here

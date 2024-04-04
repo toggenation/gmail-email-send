@@ -1,16 +1,15 @@
 <?php
+declare(strict_types=1);
+
 // in src/Database/Type/JsonType.php
 
 
 namespace GmailEmailSend\Database\Type;
 
-use Cake\Core\Configure;
 use Cake\Database\Driver;
 use Cake\Database\Type\BaseType;
-use Cake\Utility\Security;
 use GmailEmailSend\Service\Traits\DbFieldEncryptionTrait;
 use PDO;
-
 
 class EncryptedType extends BaseType
 {
@@ -22,6 +21,7 @@ class EncryptedType extends BaseType
     {
         parent::__construct($name);
     }
+
     public function toPHP(mixed $value, Driver $driver): mixed
     {
         if ($value === null) {
@@ -50,6 +50,7 @@ class EncryptedType extends BaseType
         if ($value === null) {
             return PDO::PARAM_NULL;
         }
+
         return PDO::PARAM_STR;
     }
 }

@@ -1,20 +1,17 @@
 <?php
-
 declare(strict_types=1);
 
 namespace GmailEmailSend\Controller;
 
-
 use Cake\Core\Exception\CakeException;
 use Cake\Event\EventInterface;
 use Cake\Log\LogTrait;
+use Cake\Utility\Text;
 use GmailEmailSend\Model\Table\GmailAuthTable;
 use GmailEmailSend\Service\GmailAuth;
-use GmailEmailSend\Service\Traits\DbFieldEncryptionTrait;
 use GmailEmailSend\Service\Traits\ErrorFormatterTrait;
 use Google\Client;
 use Google\Service\Gmail;
-use Symfony\Component\Uid\Ulid;
 
 /**
  * Code Controller
@@ -23,6 +20,7 @@ class AuthController extends AppController
 {
     use ErrorFormatterTrait;
     use LogTrait;
+
     // use DbFieldEncryptionTrait;
 
     public GmailAuthTable $table;
@@ -190,6 +188,7 @@ class AuthController extends AppController
 
         $this->set(compact('entity'));
     }
+
     public function getToken(GmailAuth $auth)
     {
         $entity = $this->table->newEmptyEntity();
@@ -219,7 +218,7 @@ class AuthController extends AppController
             $entity->credentials =
                 $credentialContents;
 
-            $entity->state = Ulid::generate();
+            $entity->state = Text::uuid();
 
             if ($this->table->save($entity)) {
                 $client = new Client();

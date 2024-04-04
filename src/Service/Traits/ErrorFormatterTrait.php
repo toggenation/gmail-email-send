@@ -1,11 +1,8 @@
 <?php
-
 declare(strict_types=1);
-
 
 namespace GmailEmailSend\Service\Traits;
 
-use Cake\Utility\Inflector;
 use Cake\Utility\Text;
 
 trait ErrorFormatterTrait

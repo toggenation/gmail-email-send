@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 
 namespace GmailEmailSend\Service;
@@ -24,7 +23,7 @@ class GmailAuth
         $this->table = $this->fetchTable('GmailEmailSend.GmailAuth');
     }
 
-    public function handleUpload($credentials): string | false
+    public function handleUpload($credentials): string|false
     {
         if ($credentials->getError() !== 0) {
             return __('You need to upload a client_secret*.json file');
@@ -41,7 +40,7 @@ class GmailAuth
         );
     }
 
-    public function validateUpload($credentials): string | false
+    public function validateUpload($credentials): string|false
     {
         $credentialContents = $this->getCredentialsAsJson($credentials);
 

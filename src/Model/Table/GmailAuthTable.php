@@ -1,12 +1,9 @@
 <?php
-
 declare(strict_types=1);
 
 namespace GmailEmailSend\Model\Table;
 
-use Cake\Database\Schema\TableSchemaInterface;
 use Cake\ORM\RulesChecker;
-
 use Cake\Validation\Validator;
 use GmailEmailSend\Orm\Table;
 

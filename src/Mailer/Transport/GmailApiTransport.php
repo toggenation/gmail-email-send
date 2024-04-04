@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 
 namespace GmailEmailSend\Mailer\Transport;
@@ -37,7 +36,7 @@ class GmailApiTransport extends SmtpTransport
         $this->table = $this->fetchTable('GmailEmailSend.GmailAuth');
     }
 
-    protected function validateUser()
+    protected function validateUser(): void
     {
         $this->table->find()
             ->where(['email' => $this->gmailUser])
@@ -122,9 +121,8 @@ class GmailApiTransport extends SmtpTransport
 
                 if ($this->table->save($user) === false) {
                     throw new Exception('Could not save updated token');
-                };
+                }
             } else {
-
                 throw new CakeException('Could not refresh the access/refresh token non-interactively');
             }
         }
