@@ -185,7 +185,7 @@ Message sent to james@example.com and jm1289899@gmail.com
             'log' => true
         ]);
 
- // config/app.php
+ // config/app_local.php
 
  'Log' => [
         //add this

@@ -35,6 +35,8 @@ class GmailEmailSendPlugin extends BasePlugin
     public function bootstrap(PluginApplicationInterface $app): void
     {
         TypeFactory::map('encrypted', EncryptedType::class);
+
+        Configure::load('GmailEmailSend.gmail_email_send_config');
     }
 
     /**

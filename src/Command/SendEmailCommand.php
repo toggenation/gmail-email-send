@@ -9,6 +9,7 @@ use Cake\Command\Command;
 use Cake\Console\Arguments;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
+use Cake\Core\Configure;
 use Cake\Mailer\Mailer;
 use Cake\Utility\Text;
 use GmailEmailSend\Mailer\Transport\GmailApiTransport;
@@ -44,11 +45,11 @@ class SendEmailCommand extends Command
             'log' => true,
         ]);
 
-        $sender = ['yt.toggen@gmail.com', 'Toggen Youtube'];
+        $sender = Configure::read('GmailEmailSend.SENDER');
+        $to = Configure::readOrFail('GmailEmailSend.TO');
 
         $mailer->setEmailFormat('html')
-            ->setTo('james@toggen.com.au', 'James McDonald')
-            ->addTo('jmcd1973@gmail.com', 'James Gmail 1973')
+            ->setTo(...$to)
             ->setFrom(...$sender)
             ->setSubject('Test of the Gmail Send XOAUTH2 ' . Chronos::now('Australia/Melbourne')->toAtomString())
             // config in app_local.php
