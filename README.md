@@ -8,11 +8,25 @@ This is an alpha repo.
 
 On the Google Cloud Console you need to:
 
-1. Create a project
-2. Enable the Gmail Api
-2. Create an Oauth consent screen
-3. Create some Oauth Credentials. 
-4. Add a redirectUrl for the default CakePHP dev server of `http://localhost:8765/gmail/code`
+1. Login to the console.cloud.google.com (in this example I'm using yt.toggen@gmail.com)
+2. Create a New project
+4. Project Name: Gmail Email Send Project
+2. Got APIs & Services => Enable APIs & Services => Enable APIsS AND SERVICES
+4. Search for GMail API click on it and select the Enable button
+2. Select OAuth consent Screen
+5. Create an Oauth consent screen
+        External User Type (Internal isn't available for non-paid accounts)
+        App Name: Toggenation Email Send
+        User support email: yt.toggen@gmail.com
+        Developer contact information: yt.toggen@gmail.com
+        Add Or Remove Scopes: gmail.compose (this will appear under Your Restricted Scopes)
+        Add a Test User: yt.toggen@gmail.com
+3. Create some Oauth Credentials
+        Credential Type: Oauth Client ID
+        Application Type: Web application
+        Name: leave default or change if you want
+        Authorized redirect URIs: `http://localhost:8765/gmail/code` 
+            (point to you CakePHP dev env and add a domain .e.g https://example.com/gmail/code if you want to use it for real)
 4. Download the client_secrets*.json credentials file
 
 Install CakePHP 5.x+
@@ -21,23 +35,16 @@ Install CakePHP 5.x+
 composer create-project --prefer-dist cakephp/app:~5.0 gmail-oauth-send
 ```
 
-Install this plugin into your CakePHP application using [composer](https://getcomposer.org).
+Install this plugin
+```sh
+cd $project_root/plugins
 
-Add the following to `composer.json`
+git clone https://github.com/toggenation/gmail-email-send.git GmailEmailSend
 
-```json
-"repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/toggenation/gmail-email-send"
-        }
-    ],
 ```
 
+Load the plugin
 ```sh
-composer require toggenation/gmail-email-send:dev-master
-
-// then load the plugin
 
 bin/cake plugin load GmailEmailSend
 ```
@@ -53,6 +60,7 @@ Add a database connection and the encryption config
         ],
  'Security' => [
         'salt' => env('SECURITY_SALT', 'ec3e8fa8b3fa8g414fa1a704d209007a9c85406a126fe2910885826f2c6e4d2c'),
+        // add this CLIENT_SECRET_KEY with a __SALT___ template
         'CLIENT_SECRET_KEY' => '__SALT__'
     ],
 
@@ -64,6 +72,7 @@ Run composer run post-install-cmd to replace `__SALT__` with key
 composer run post-install-cmd
 
 ```
+
 ```php
 // app_local.php after:
 
@@ -87,7 +96,7 @@ bin/cake server
 
 Connect to `http://localhost:8765/gmail/get-token`
 
-Enter a gmail username (user123@gmail.com) and upload the `client_secret*.json` you created in Google Cloud Console
+Enter a gmail username (yt.toggen@gmail.com) and upload the `client_secret*.json` you created in Google Cloud Console
 
 Once you upload a valid client_secret.json you should be redirected to Googles Consent screen so you can allow Gmail API access to send email on behalf of your email account. 
 
@@ -193,3 +202,23 @@ Message sent to james@example.com and jm1289899@gmail.com
 ```
 
 
+### Install this plugin using composer (Not recommended as you will probably want to tweak the code)
+
+Install this plugin into your CakePHP application using [composer](https://getcomposer.org).
+
+Add the following to `composer.json`
+
+```json
+"repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/toggenation/gmail-email-send"
+        }
+    ],
+```
+
+```sh
+composer require toggenation/gmail-email-send:dev-master
+
+// then load the plugin
+```

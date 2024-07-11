@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace GmailEmailSend\Service\Traits;
@@ -16,10 +17,10 @@ trait DbFieldEncryptionTrait
         );
     }
 
-    public function decrypt($encrypted): void
+    public function decrypt($encrypted): ?array
     {
         if (is_null($encrypted)) {
-            return;
+            return null;
         }
 
         return json_decode(
@@ -27,7 +28,8 @@ trait DbFieldEncryptionTrait
                 $encrypted,
                 Configure::read('Security.CLIENT_SECRET_KEY')
             ),
-            true
+            // array return type
+            associative: true
         );
     }
 }

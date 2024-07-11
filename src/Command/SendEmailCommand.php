@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace GmailEmailSend\Command;
@@ -27,7 +28,6 @@ class SendEmailCommand extends Command
     public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
         $parser = parent::buildOptionParser($parser);
-
         return $parser;
     }
 
@@ -44,7 +44,7 @@ class SendEmailCommand extends Command
             'log' => true,
         ]);
 
-        $sender = ['jmcd1973@gmail.com', 'James McDonald 1973'];
+        $sender = ['yt.toggen@gmail.com', 'Toggen Youtube'];
 
         $mailer->setEmailFormat('html')
             ->setTo('james@toggen.com.au', 'James McDonald')
