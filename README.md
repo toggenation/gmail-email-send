@@ -8,7 +8,7 @@ This is an alpha repo.
 
 On the Google Cloud Console you need to:
 
-1. Login to the console.cloud.google.com (in this example I'm using yt.toggen@gmail.com)
+1. Login to the [Google Cloud Console](https://console.cloud.google.com) (in this example I'm using toggen.yt@gmail.com)
 2. Create a New project
 4. Project Name: Gmail Email Send Project
 2. Got APIs & Services => Enable APIs & Services => Enable APIsS AND SERVICES
@@ -17,10 +17,10 @@ On the Google Cloud Console you need to:
 5. Create an Oauth consent screen
         External User Type (Internal isn't available for non-paid accounts)
         App Name: Toggenation Email Send
-        User support email: yt.toggen@gmail.com
-        Developer contact information: yt.toggen@gmail.com
+        User support email: toggen.yt@gmail.com
+        Developer contact information: toggen.yt@gmail.com
         Add Or Remove Scopes: gmail.compose (this will appear under Your Restricted Scopes)
-        Add a Test User: yt.toggen@gmail.com
+        Add a Test User: toggen.yt@gmail.com
 3. Create some Oauth Credentials
         Credential Type: Oauth Client ID
         Application Type: Web application
@@ -33,6 +33,26 @@ Install CakePHP 5.x+
 
 ```sh
 composer create-project --prefer-dist cakephp/app:~5.0 gmail-oauth-send
+```
+
+Add Gmail PHP
+Add an `extra` key to `$project_root/composer.json`
+
+```json
+{
+ "extra": {
+        "google/apiclient-services": [
+            "Gmail"
+        ]
+    },
+    // ... rest of composer.json content
+
+```
+
+Install `google/apiclient`
+
+```sh
+composer require  "google/apiclient"
 ```
 
 Install this plugin
@@ -96,7 +116,7 @@ bin/cake server
 
 Connect to `http://localhost:8765/gmail/get-token`
 
-Enter a gmail username (yt.toggen@gmail.com) and upload the `client_secret*.json` you created in Google Cloud Console
+Enter a gmail username (toggen.yt@gmail.com) and upload the `client_secret*.json` you created in Google Cloud Console
 
 Once you upload a valid client_secret.json you should be redirected to Googles Consent screen so you can allow Gmail API access to send email on behalf of your email account. 
 
@@ -107,7 +127,7 @@ When you have consented and been redirected back to http://locahost:8765/gmail/c
 Example of using the mail send ability
 
 ```sh
-bin/cake bake command Send
+bin/cake bake command SendEmail
 ```
 
 ```php
@@ -126,7 +146,7 @@ bin/cake bake command Send
          $mailer->setEmailFormat('html')
             ->setTo('james@example.com', 'James McDonald')
             ->addTo('jm1289899@gmail.com', 'James Gmail 73')
-            ->setFrom('jm1289899@gmail.com', 'James 1973 Gmail')
+            ->setFrom('toggen.yt@gmail.com', 'Youtube Toggen Gmail')
             ->setSubject('Test of the Gmail Send XOAUTH2 ' . Chronos::now('Australia/Melbourne')->toAtomString())
             // use configuration in app/app_local.php (see below)
             // ->setTransport('gmailApi')
@@ -152,7 +172,7 @@ bin/cake bake command Send
 ```
 
 ```sh
-bin/cake send
+bin/cake send_email
 
 # output
 Message sent to james@example.com and jm1289899@gmail.com
@@ -201,7 +221,6 @@ Message sent to james@example.com and jm1289899@gmail.com
 
 ```
 
-
 ### Install this plugin using composer (Not recommended as you will probably want to tweak the code)
 
 Install this plugin into your CakePHP application using [composer](https://getcomposer.org).
@@ -222,3 +241,47 @@ composer require toggenation/gmail-email-send:dev-master
 
 // then load the plugin
 ```
+
+# References 
+
+## Sending via Gmail API via PHP
+
+https://github.com/googleworkspace/php-samples/blob/main/gmail/quickstart/quickstart.php
+
+## Create Custom CakePHP Email Transport
+
+https://book.cakephp.org/5/en/core-libraries/email.html#creating-custom-transports
+
+
+## Adding Custom Database Type
+
+https://book.cakephp.org/5/en/orm/database-basics.html#adding-custom-types
+
+
+## Loading Custom Configuration
+
+https://book.cakephp.org/5/en/development/configuration.html#loading-additional-configuration-files
+
+## Script
+
+Database config in app_local.php
+
+Create Plugin
+
+bin/cake bake plugin GmailAPI
+
+Create Migration for gmail_auth Table
+bin/cake bake migration -p GmailAPI GmailAuth
+
+bin/cake migrations status -p GmailAPI
+
+bin/cake migrations migrate -p GmailAPI
+
+Create Controller 
+bin/cake bake controller -p GmailAPI GmailAuth
+
+Bake Templates
+bin/cake bake template -p GmailAPI GmailAuth
+
+Forget the above and just bake all
+bin/cake bake all -p GmailAPI GmailAuth

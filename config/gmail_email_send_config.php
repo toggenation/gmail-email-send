@@ -4,8 +4,8 @@ use Cake\Log\Engine\FileLog;
 
 $config = [
     'GmailEmailSend' => [
-        'SENDER' => ['yt.toggen@gmail.com', 'Toggen Youtube'],
-        'TO' => ['james@toggen.com.au', 'James McDonald'],
+        'SENDER' => ['toggen.yt@gmail.com', 'Toggen Youtube'],
+        'TO' => ['toggen.yt@gmail.com', 'Toggen Youtube Gmail Account'],
     ],
 ];
 

@@ -5,7 +5,7 @@ namespace GmailEmailSend\Mailer\Transport;
 
 use Cake\Core\Exception\CakeException;
 use Cake\Mailer\Message;
-use Cake\Mailer\Transport\SmtpTransport;
+use Cake\Mailer\AbstractTransport;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Exception;
 use GmailEmailSend\Model\Table\GmailAuthTable;
@@ -14,12 +14,14 @@ use Google\Client;
 use Google\Service\Gmail;
 use Google\Service\Gmail\Message as GmailMessage;
 
-class GmailApiTransport extends SmtpTransport
+class GmailApiTransport extends AbstractTransport
 {
     use LocatorAwareTrait;
     use DbFieldEncryptionTrait;
 
     public string $gmailUser;
+
+    public array $_content;
 
     public GmailAuthTable $table;
 
@@ -55,7 +57,7 @@ class GmailApiTransport extends SmtpTransport
 
         $service = new Gmail($client);
 
-        $results = $service->users_messages->send($this->gmailUser, $gmailMessage);
+        $service->users_messages->send($this->gmailUser, $gmailMessage);
 
         return [
             'message' => $message->getBodyString(),
