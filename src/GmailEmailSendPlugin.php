@@ -40,7 +40,7 @@ class GmailEmailSendPlugin extends BasePlugin
 
         Configure::load('GmailEmailSend.gmail_email_send_config');
 
-        Log::setConfig('email', Configure::consume('GmailEmailSend.Log.email'));
+        Log::setConfig('email', Configure::consume('GmailEmailSend.emailLog'));
     }
 
     /**
