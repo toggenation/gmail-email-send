@@ -7,6 +7,7 @@ use Cake\Core\Exception\CakeException;
 use Cake\Event\EventInterface;
 use Cake\Log\LogTrait;
 use Cake\Utility\Text;
+use Cake\Validation\Validator;
 use GmailEmailSend\Mailer\TestMailer;
 use GmailEmailSend\Model\Table\GmailAuthTable;
 use GmailEmailSend\Service\GmailAuth;
@@ -227,19 +228,30 @@ class AuthController extends AppController
         if ($this->getRequest()->is('POST')) {
             $data = $this->getRequest()->getData();
 
+            $validator = new Validator();
+
+            $validator->email('to');
+
+            if ($validator->validate($data)) {
+                $this->Flash->error('Invalid email please try again');
+
+                return $this->redirect(['action' => 'test', $id]);
+            }
+
+            $to = $data['to'];
+
             $mailer = new TestMailer([
                 'log' => true,
             ]);
 
             $from = $this->table->find()
                 ->where(['id' => $id])
-                ->firstOrFail();
+                ->firstOrFail()
+                ->get('email');
 
-            $mailer->send('sendTest', [ 'to' => $data['to'], 'from' => $from->email]);
+            $mailer->send('sendTest', ['to' => $to, 'from' => $from]);
 
-            $list = Text::toList(array_keys($mailer->getMessage()->getTo()));
-
-            $this->Flash->success('Message sent to ' . $list);
+            $this->Flash->success(__('Message sent to {0} from {1}', $to, $from));
 
             return $this->redirect(['action' => 'index']);
         }

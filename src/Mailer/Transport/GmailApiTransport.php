@@ -19,8 +19,6 @@ class GmailApiTransport extends AbstractTransport
     use LocatorAwareTrait;
     use DbFieldEncryptionTrait;
 
-    public string $gmailUser;
-
     public array $_content;
 
     public GmailAuthTable $table;
@@ -32,8 +30,6 @@ class GmailApiTransport extends AbstractTransport
     public function __construct($config = [])
     {
         parent::__construct($config);
-
-        $this->gmailUser = $this->getConfig('username');
 
         $this->table = $this->fetchTable('GmailEmailSend.GmailAuth');
     }
@@ -50,7 +46,10 @@ class GmailApiTransport extends AbstractTransport
 
         $service = new Gmail($client);
 
-        $service->users_messages->send($this->gmailUser, $gmailMessage);
+        $service->users_messages->send(
+            $this->getConfig('username'),
+            $gmailMessage
+        );
 
         return [
             'message' => $message->getBodyString(),
@@ -60,23 +59,19 @@ class GmailApiTransport extends AbstractTransport
 
     protected function getToken(): array
     {
-        $user = $this->getUser();
-
-        return $user->token;
+        return $this->getUser()->get('token');
     }
 
     protected function getUser()
     {
         return $this->table->find()
-            ->where(['email' => $this->gmailUser])
+            ->where(['email' => $this->getConfig('username')])
             ->firstOrFail();
     }
 
     protected function getCredentials(): array
     {
-        $user = $this->getUser();
-
-        return $user->credentials;
+        return $this->getUser()->get('credentials');
     }
 
     protected function getClient()
@@ -109,13 +104,9 @@ class GmailApiTransport extends AbstractTransport
             if ($client->getRefreshToken()) {
                 $client->fetchAccessTokenWithRefreshToken($client->getRefreshToken());
 
-                $user = $this->table->find()
-                    ->where(['email' => $this->getConfig('username')])
-                    ->firstOrFail();
+                $user = $this->getUser();
 
-                $newAccessToken = $client->getAccessToken();
-
-                $user->token = $newAccessToken;
+                $user->token = $client->getAccessToken();
 
                 // save the new token
                 if ($this->table->save($user) === false) {

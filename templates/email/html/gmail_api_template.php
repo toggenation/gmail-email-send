@@ -8,6 +8,7 @@
 <?= $one; ?><br>
 <?= $two; ?>
 
-<p style="border-radius: 6px; background-color: blue; padding: 10px;">
+<p>Inline image</p>
+<p style="border-radius: 6px; background-color: #d33c43; padding: 10px;">
     <?= $this->Html->tag('img', null, ['src' => 'cid:' . $contentId]);?>
 </p>
