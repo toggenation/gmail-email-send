@@ -8,19 +8,24 @@ use Cake\ORM\Locator\LocatorAwareTrait;
 use GmailEmailSend\Model\Table\GmailAuthTable;
 use GmailEmailSend\Service\Traits\ErrorFormatterTrait;
 use Psr\Http\Message\UploadedFileInterface;
+use Google\Client;
+use Google\Service\Gmail;
 
 class GmailAuth
 {
     use LocatorAwareTrait;
     use ErrorFormatterTrait;
 
-    public GmailAuthTable $table;
+    // public GmailAuthTable $table;
 
-    public function __construct(public ServerRequest $request)
+    public function __construct(
+        public ServerRequest $request, 
+        public GmailAuthTable $table
+        )
     {
         // $this->request->getFlash()->success("Yeah boy");
 
-        $this->table = $this->fetchTable('GmailEmailSend.GmailAuth');
+        // $this->table = $this->fetchTable('GmailEmailSend.GmailAuth');
     }
 
     public function handleUpload($credentials): string|false
@@ -29,10 +34,10 @@ class GmailAuth
             return __('You need to upload a client_secret*.json file');
         }
 
-        return $this->validateUpload($credentials);
+        return $this->getCredentialErrors($credentials);
     }
 
-    public function getCredentialsAsJson(UploadedFileInterface $credentials)
+    public function getJsonCredentialsAsArray(UploadedFileInterface $credentials): ?array
     {
         return json_decode(
             file_get_contents($credentials->getStream()->getMetadata('uri')),
@@ -40,9 +45,33 @@ class GmailAuth
         );
     }
 
-    public function validateUpload($credentials): string|false
+    public function authUrl(array $credentials, string $state): string
     {
-        $credentialContents = $this->getCredentialsAsJson($credentials);
+                $client = new Client();
+
+                $client->setApplicationName('CakePHP 5 XOAuth2 Test');
+
+                $client->setScopes([
+                    Gmail::GMAIL_SEND,
+                ]);
+
+                $client->setAuthConfig($credentials);
+
+                $client->setAccessType('offline');
+
+                $client->setPrompt('select_account consent');
+
+                $client->setState($state);
+
+                return $client->createAuthUrl();
+    }
+
+    /**
+     * @return string|false Return string of errors or false
+     */
+    public function getCredentialErrors($credentials): string|false
+    {
+        $credentialContents = $this->getJsonCredentialsAsArray($credentials);
 
         $validator = $this->table->getValidator('ClientSecret');
 

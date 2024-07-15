@@ -1,12 +1,17 @@
 <?php
+
 declare(strict_types=1);
 
 namespace GmailEmailSend\Controller;
 
+use Cake\Chronos\Chronos;
+use Cake\Core\Configure;
 use Cake\Core\Exception\CakeException;
 use Cake\Event\EventInterface;
 use Cake\Log\LogTrait;
+use Cake\Mailer\Mailer;
 use Cake\Utility\Text;
+use GmailEmailSend\Mailer\TestMailer;
 use GmailEmailSend\Model\Table\GmailAuthTable;
 use GmailEmailSend\Service\GmailAuth;
 use GmailEmailSend\Service\Traits\ErrorFormatterTrait;
@@ -83,7 +88,12 @@ class AuthController extends AppController
 
     public function code(GmailAuth $auth)
     {
-        // http://127.0.0.1:8080/getToken.php?code=4/0AeaYSHDjt5X-9rj0E_3N59gPfXHha16tcOwtk7WLdKWtj8IESOViYikwqvdtQ2LpS3jG-Q&scope=https://www.googleapis.com/auth/gmail.compose%20https://www.googleapis.com/auth/gmail.addons.current.action.compose%20https://www.googleapis.com/auth/gmail.send
+        // http://localhost:8765/gmail/code?state=c8b7c214-49aa-4cd2-b5bd-0c3e32f25613&code=4/0ATx3LY60P7k5kV54zhnwR_gxVcesOIWI5oVeL2G3A19kliur_NN-HFCMeWvAlBi27j-U9g&scope=https://www.googleapis.com/auth/gmail.send
+        // params are
+        // state c8b7c214-49aa-4cd2-b5bd-0c3e32f25613
+        // code 4/0ATx3LY60P7k5kV54zhnwR_gxVcesOIWI5oVeL2G3A19kliur_NN-HFCMeWvAlBi27j-U9g
+        // scope https://www.googleapis.com/auth/gmail.send
+
         $params = $this->request->getQueryParams(); // code, state, scope
 
         /**
@@ -107,12 +117,12 @@ class AuthController extends AppController
 
         $accessToken = $client->fetchAccessTokenWithAuthCode($params['code']);
 
-        $client->setAccessToken($accessToken);
-
         // Check to see if there was an error.
         if (array_key_exists('error', $accessToken)) {
             throw new CakeException(join(', ', $accessToken));
         }
+
+        $client->setAccessToken($accessToken);
 
         /**
          * @var \GmailEmailSend\Model\Entity\GmailAuth $gmailUser
@@ -123,7 +133,9 @@ class AuthController extends AppController
 
         $gmailUser->token = $client->getAccessToken();
 
-        $this->table->save($gmailUser);
+        if($this->table->save($gmailUser)) {
+            $this->Flash->success('Gmail API auth token saved!');
+        };
 
         $this->set(compact('params'));
     }
@@ -150,7 +162,7 @@ class AuthController extends AppController
                 return $this->redirect(['action' => 'changeCredentials', $entity->id]);
             }
 
-            $credentialContents =  $auth->getCredentialsAsJson($credentials);
+            $credentialContents =  $auth->getJsonCredentialsAsArray($credentials);
 
             $entity = $this->table->patchEntity($entity, $data);
 
@@ -158,25 +170,8 @@ class AuthController extends AppController
                 $credentialContents;
 
             if ($this->table->save($entity)) {
-                // $this->Flash->success('Saved!');
-
-                $client = new Client();
-
-                $client->setApplicationName('CakePHP 5 XOAuth2 Test');
-
-                $client->setScopes([
-                    Gmail::GMAIL_SEND,
-                ]);
-
-                $client->setAuthConfig($credentialContents);
-
-                $client->setAccessType('offline');
-
-                $client->setPrompt('select_account consent');
-
-                $client->setState($entity->state);
-
-                $authUrl = $client->createAuthUrl();
+                $this->Flash->success('Credentials updated!');
+                $authUrl = $auth->authUrl($credentialContents, $entity->state);
 
                 return $this->redirect($authUrl);
             } else {
@@ -211,33 +206,16 @@ class AuthController extends AppController
                 return $this->redirect(['action' => 'getToken']);
             }
 
-            $credentialContents =  $auth->getCredentialsAsJson($credentials);
+            $credentialContents =  $auth->getJsonCredentialsAsArray($credentials);
 
             $entity = $this->table->patchEntity($entity, $data);
 
-            $entity->credentials =
-                $credentialContents;
+            $entity->credentials = $credentialContents;
 
             $entity->state = Text::uuid();
 
             if ($this->table->save($entity)) {
-                $client = new Client();
-
-                $client->setApplicationName('CakePHP 5 XOAuth2 Test');
-
-                $client->setScopes([
-                    Gmail::GMAIL_SEND,
-                ]);
-
-                $client->setAuthConfig($credentialContents);
-
-                $client->setAccessType('offline');
-
-                $client->setPrompt('select_account consent');
-
-                $client->setState($entity->state);
-
-                $authUrl = $client->createAuthUrl();
+                $authUrl = $auth->authUrl($credentialContents, $entity->state);
 
                 return $this->redirect($authUrl);
             } else {
@@ -246,5 +224,23 @@ class AuthController extends AppController
         }
 
         $this->set(compact('entity'));
+    }
+
+    public function test($id = null) {
+        if($this->getRequest()->is('POST')) {
+            $data = $this->getRequest()->getData();
+            
+            $mailer = new TestMailer([
+                'log' => true,
+            ]);
+
+            $mailer->send('sendTest', [ 'to' => $data['to']] );
+         
+            $list = Text::toList(array_keys($mailer->getMessage()->getTo()));
+
+            $this->Flash->success('Message sent to ' . $list);
+
+            return $this->redirect(['action' => 'index']);
+        }
     }
 }

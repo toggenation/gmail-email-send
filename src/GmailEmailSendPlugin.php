@@ -15,6 +15,7 @@ use Cake\Http\ServerRequest;
 use Cake\I18n\Middleware\LocaleSelectorMiddleware;
 use Cake\Routing\RouteBuilder;
 use GmailEmailSend\Database\Type\EncryptedType;
+use GmailEmailSend\Model\Table\GmailAuthTable;
 use GmailEmailSend\Service\GmailAuth;
 use League\Container\ReflectionContainer;
 
@@ -62,6 +63,12 @@ class GmailEmailSendPlugin extends BasePlugin
                 $builder->connect(
                     '/view/{id}',
                     ['controller' => 'Auth', 'action' => 'view'],
+                    ['id' => '\d+', 'pass' => ['id']]
+                );
+
+                $builder->connect(
+                    '/test/{id}',
+                    ['controller' => 'Auth', 'action' => 'test', ],
                     ['id' => '\d+', 'pass' => ['id']]
                 );
                 $builder->connect(
@@ -132,6 +139,7 @@ class GmailEmailSendPlugin extends BasePlugin
 
         // Add your services here
         $container->add(GmailAuth::class)
-            ->addArgument(ServerRequest::class);
+            ->addArgument(ServerRequest::class)
+            ->addArgument(GmailAuthTable::class);
     }
 }
