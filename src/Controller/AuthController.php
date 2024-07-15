@@ -113,9 +113,9 @@ class AuthController extends AppController
 
         $client->setAuthConfig($gmailUser->credentials);
 
-        $accessToken = $client->fetchAccessTokenWithAuthCode($params['code']);
-
         $client->setRedirectUri($this->getRedirectUri());
+
+        $accessToken = $client->fetchAccessTokenWithAuthCode($params['code']);
 
         // Check to see if there was an error.
         if (array_key_exists('error', $accessToken)) {

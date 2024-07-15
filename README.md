@@ -285,3 +285,5 @@ bin/cake bake template -p GmailAPI GmailAuth
 
 Forget the above and just bake all
 bin/cake bake all -p GmailAPI GmailAuth
+
+# Auth Urls

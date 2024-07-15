@@ -58,13 +58,13 @@ class GmailAuth
 
         $client->setAuthConfig($credentials);
 
+        $client->setRedirectUri($this->getRedirectUri());
+
         $client->setAccessType('offline');
 
         $client->setPrompt('select_account consent');
 
         $client->setState($state);
-
-        $client->setRedirectUri($this->getRedirectUri());
 
         $client->setLoginHint($this->getUser($state)->get('email'));
 
