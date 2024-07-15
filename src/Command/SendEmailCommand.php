@@ -46,6 +46,7 @@ class SendEmailCommand extends Command
         ]);
 
         $sender = Configure::read('GmailEmailSend.SENDER');
+
         $to = Configure::readOrFail('GmailEmailSend.TO');
 
         $contentId = Text::uuid();
@@ -74,8 +75,8 @@ class SendEmailCommand extends Command
         /**
          * @var array{headers: string, message: string}
          */
-        $message = $mailer->deliver();
-        // dd($message);
+        $mailer->deliver();
+
         $list = Text::toList(array_keys($mailer->getMessage()->getTo()));
 
         $io->out('Message sent to ' . $list);
