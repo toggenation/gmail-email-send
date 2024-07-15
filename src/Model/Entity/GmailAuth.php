@@ -29,6 +29,7 @@ class GmailAuth extends Entity
         'email' => true,
         'token' => true,
         'state' => true,
+        'description' => true,
     ];
 
     /**

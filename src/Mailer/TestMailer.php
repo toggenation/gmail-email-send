@@ -33,7 +33,7 @@ class TestMailer extends Mailer
 
         $this->setEmailFormat('html')
             ->setTo($to)
-            ->setFrom($from)
+            ->setFrom(...$from)
             ->setSubject(
                 __(
                     'Test of the Gmail Send XOAUTH2 {0}',
@@ -49,7 +49,7 @@ class TestMailer extends Mailer
                     'contentId' => $contentId,
                 ],
             ])
-            ->setTransport(new GmailApiTransport(['username' => $from]))
+            ->setTransport(new GmailApiTransport(['username' => $from[0]]))
             ->viewBuilder()
             ->setTemplate('GmailEmailSend.gmail_api_template')
             ->setLayout('GmailEmailSend.gmail_api_layout')

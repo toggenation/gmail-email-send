@@ -3,13 +3,13 @@ declare(strict_types=1);
 
 namespace GmailEmailSend\Mailer\Transport;
 
+use Cake\Core\Configure;
 use Cake\Core\Exception\CakeException;
 use Cake\Mailer\AbstractTransport;
 use Cake\Mailer\Message as CakeMessage;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Exception;
 use GmailEmailSend\Model\Table\GmailAuthTable;
-use GmailEmailSend\Service\Traits\DbFieldEncryptionTrait;
 use Google\Client;
 use Google\Service\Gmail;
 use Google\Service\Gmail\Message as GmailMessage;
@@ -17,19 +17,24 @@ use Google\Service\Gmail\Message as GmailMessage;
 class GmailApiTransport extends AbstractTransport
 {
     use LocatorAwareTrait;
-    use DbFieldEncryptionTrait;
 
     public array $_content;
 
     public GmailAuthTable $table;
 
+    protected string $applicationName;
+
     protected array $_defaultConfig = [
-        'username' => 'jmcd1973@gmail.com',
+        'username' => 'ytoggen@gmail.com',
+        'applicationName' => 'Toggen Gmail API Email Send',
     ];
 
     public function __construct($config = [])
     {
         parent::__construct($config);
+
+        $this->applicationName = Configure::read('GmailEmailSend.applicationName')
+            ?? $this->getConfig('applicationName');
 
         $this->table = $this->fetchTable('GmailEmailSend.GmailAuth');
     }
@@ -46,10 +51,7 @@ class GmailApiTransport extends AbstractTransport
 
         $service = new Gmail($client);
 
-        $service->users_messages->send(
-            $this->getConfig('username'),
-            $gmailMessage
-        );
+        $service->users_messages->send('me', $gmailMessage);
 
         return [
             'message' => $message->getBodyString(),
@@ -57,7 +59,7 @@ class GmailApiTransport extends AbstractTransport
         ];
     }
 
-    protected function getToken(): array
+    protected function getTokenStoredInDb(): array
     {
         return $this->getUser()->get('token');
     }
@@ -78,7 +80,7 @@ class GmailApiTransport extends AbstractTransport
     {
         $client = new Client();
 
-        $client->setApplicationName('CakePHP 5 XOAuth2 Test');
+        $client->setApplicationName($this->applicationName);
 
         $client->setScopes([
             Gmail::GMAIL_SEND,
@@ -92,7 +94,7 @@ class GmailApiTransport extends AbstractTransport
 
         $client->setPrompt('select_account consent');
 
-        $token = $this->getToken();
+        $token = $this->getTokenStoredInDb();
 
         if ($token) {
             $client->setAccessToken($token);

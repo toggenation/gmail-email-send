@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace GmailEmailSend\Controller;
 
+use Cake\Core\Configure;
 use Cake\Core\Exception\CakeException;
 use Cake\Event\EventInterface;
 use Cake\Log\LogTrait;
@@ -100,17 +101,15 @@ class AuthController extends AppController
             ->where(['state' => $params['state']])
             ->firstOrFail();
 
-        $decrypted = $gmailUser->credentials;
-
         $client = new Client();
 
-        $client->setApplicationName('CakePHP 5 XOAuth2 Test');
+        $client->setApplicationName(Configure::read('GmailEmailSend.applicationName'));
 
         $client->setScopes([
             Gmail::GMAIL_SEND,
         ]);
 
-        $client->setAuthConfig($decrypted);
+        $client->setAuthConfig($gmailUser->credentials);
 
         $accessToken = $client->fetchAccessTokenWithAuthCode($params['code']);
 
@@ -120,13 +119,6 @@ class AuthController extends AppController
         }
 
         $client->setAccessToken($accessToken);
-
-        /**
-         * @var \GmailEmailSend\Model\Entity\GmailAuth $gmailUser
-         */
-        $gmailUser = $this->table->find()
-            ->where(['state' => $params['state']])
-            ->firstOrFail();
 
         $gmailUser->token = $client->getAccessToken();
 
@@ -161,10 +153,9 @@ class AuthController extends AppController
 
             $credentialContents =  $auth->getJsonCredentialsAsArray($credentials);
 
-            $entity = $this->table->patchEntity($entity, $data);
+            $data['credentials'] =  $credentialContents;
 
-            $entity->credentials =
-                $credentialContents;
+            $entity = $this->table->patchEntity($entity, $data);
 
             if ($this->table->save($entity)) {
                 $this->Flash->success('Credentials updated!');
@@ -188,6 +179,16 @@ class AuthController extends AppController
         if ($this->request->is('POST')) {
             $data = $this->request->getData();
 
+            $notNewUser = $this->table->find()
+                ->where(['email' => $data['email']])
+                ->first();
+
+            if ($notNewUser) {
+                $this->Flash->error('User already exists. Redirecting to change credentials');
+
+                return $this->redirect(['action' => 'changeCredentials', $notNewUser->id]);
+            }
+
             /**
              * @var \Psr\Http\Message\UploadedFileInterface $credentials
              */
@@ -205,11 +206,11 @@ class AuthController extends AppController
 
             $credentialContents =  $auth->getJsonCredentialsAsArray($credentials);
 
+            $data['credentials'] = $credentialContents;
+
+            $data['state'] = Text::uuid();
+
             $entity = $this->table->patchEntity($entity, $data);
-
-            $entity->credentials = $credentialContents;
-
-            $entity->state = Text::uuid();
 
             if ($this->table->save($entity)) {
                 $authUrl = $auth->authUrl($credentialContents, $entity->state);
@@ -246,12 +247,11 @@ class AuthController extends AppController
 
             $from = $this->table->find()
                 ->where(['id' => $id])
-                ->firstOrFail()
-                ->get('email');
+                ->firstOrFail();
 
-            $mailer->send('sendTest', ['to' => $to, 'from' => $from]);
+            $mailer->send('sendTest', ['to' => $to, 'from' => [$from->email, $from->description]]);
 
-            $this->Flash->success(__('Message sent to {0} from {1}', $to, $from));
+            $this->Flash->success(__('Message sent to {0} from {1}', $to, $from->email));
 
             return $this->redirect(['action' => 'index']);
         }

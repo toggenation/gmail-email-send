@@ -12,6 +12,7 @@ $config = [
             'file' => 'email',
             'scopes' => ['email'],
         ],
+        'applicationName' => 'Toggen Gmail API XOAuth2',
     ],
 ];
 

@@ -46,23 +46,32 @@ class GmailAuth
 
     public function authUrl(array $credentials, string $state): string
     {
-                $client = new Client();
+        $client = new Client();
 
-                $client->setApplicationName('CakePHP 5 XOAuth2 Test');
+        $client->setApplicationName('CakePHP 5 XOAuth2 Test');
 
-                $client->setScopes([
-                    Gmail::GMAIL_SEND,
-                ]);
+        $client->setScopes([
+            Gmail::GMAIL_SEND,
+        ]);
 
-                $client->setAuthConfig($credentials);
+        $client->setAuthConfig($credentials);
 
-                $client->setAccessType('offline');
+        $client->setAccessType('offline');
 
-                $client->setPrompt('select_account consent');
+        $client->setPrompt('select_account consent');
 
-                $client->setState($state);
+        $client->setState($state);
 
-                return $client->createAuthUrl();
+        $client->setLoginHint($this->getUser($state)->get('email'));
+
+        return $client->createAuthUrl();
+    }
+
+    public function getUser($state)
+    {
+        return $this->table->find()
+            ->where(['state' => $state])
+            ->firstOrFail();
     }
 
     /**

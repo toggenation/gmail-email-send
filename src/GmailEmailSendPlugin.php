@@ -13,8 +13,10 @@ use Cake\Http\MiddlewareQueue;
 use Cake\Http\ServerRequest;
 use Cake\I18n\Middleware\LocaleSelectorMiddleware;
 use Cake\Log\Log;
+use Cake\Mailer\TransportFactory;
 use Cake\Routing\RouteBuilder;
 use GmailEmailSend\Database\Type\EncryptedType;
+use GmailEmailSend\Mailer\Transport\GmailApiTransport;
 use GmailEmailSend\Model\Table\GmailAuthTable;
 use GmailEmailSend\Service\GmailAuth;
 use League\Container\ReflectionContainer;
@@ -35,11 +37,20 @@ class GmailEmailSendPlugin extends BasePlugin
      */
     public function bootstrap(PluginApplicationInterface $app): void
     {
+        // DatabaseType config
         TypeFactory::map('encrypted', EncryptedType::class);
 
+        // Load the Plugin configuration
         Configure::load('GmailEmailSend.gmail_email_send_config');
 
+        // Logging
         Log::setConfig('email', Configure::consume('GmailEmailSend.emailLog'));
+
+        // Email Transport Config
+        TransportFactory::setConfig('gmailApi', [
+            'className' => GmailApiTransport::class,
+            'username' => 'toggen.yt@gmail.com',
+        ],);
     }
 
     /**
@@ -70,7 +81,7 @@ class GmailEmailSendPlugin extends BasePlugin
 
                 $builder->connect(
                     '/test/{id}',
-                    ['controller' => 'Auth', 'action' => 'test', ],
+                    ['controller' => 'Auth', 'action' => 'test',],
                     ['id' => '\d+', 'pass' => ['id']]
                 );
                 $builder->connect(
