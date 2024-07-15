@@ -5,6 +5,7 @@ namespace GmailEmailSend\Service;
 
 use Cake\Http\ServerRequest;
 use Cake\ORM\Locator\LocatorAwareTrait;
+use Cake\Routing\Router;
 use GmailEmailSend\Model\Table\GmailAuthTable;
 use GmailEmailSend\Service\Traits\ErrorFormatterTrait;
 use Google\Client;
@@ -61,6 +62,13 @@ class GmailAuth
         $client->setPrompt('select_account consent');
 
         $client->setState($state);
+
+        $redirectUri = Router::url([
+            'controller' => 'Auth',
+            'action' => 'code',
+        ], true);
+
+        $client->setRedirectUri($redirectUri);
 
         $client->setLoginHint($this->getUser($state)->get('email'));
 
