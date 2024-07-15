@@ -27,7 +27,7 @@
                         <td class="actions">
                             <?= $this->Html->link(__('View'), ['action' => 'view', $gmailAuth->id]) ?>
                             <?= $this->Html->link(__('Edit'), [
-                                'controller' => 'Auth', 'action' => 'changeCredentials', $gmailAuth->id
+                                'controller' => 'Auth', 'action' => 'changeCredentials', $gmailAuth->id,
                             ]) ?>
                             <?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $gmailAuth->id], ['confirm' => __('Are you sure you want to delete # {0}?', $gmailAuth->id)]) ?>
                             <?= $this->Html->link(__('Test'), ['action' => 'test', $gmailAuth->id]) ?>

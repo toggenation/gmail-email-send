@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 
 namespace GmailEmailSend\Service\Traits;
@@ -9,7 +8,7 @@ use Cake\Utility\Security;
 
 trait DbFieldEncryptionTrait
 {
-    public function encrypt($unencrypted)
+    public function encrypt($unencrypted): string
     {
         return Security::encrypt(
             json_encode($unencrypted),

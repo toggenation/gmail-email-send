@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace GmailEmailSend\Test\TestCase\Mailer;
 
 use Cake\TestSuite\TestCase;
-use GmailEmailSend\Mailer\TestMailer;
 
 /**
  * GmailEmailSend\Mailer\TestMailer Test Case

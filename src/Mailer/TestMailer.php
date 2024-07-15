@@ -1,13 +1,12 @@
 <?php
-
 declare(strict_types=1);
 
 namespace GmailEmailSend\Mailer;
 
 use Cake\Chronos\Chronos;
-use Cake\Core\Configure;
 use Cake\Mailer\Mailer;
 use Cake\Utility\Text;
+use GmailEmailSend\Mailer\Transport\GmailApiTransport;
 
 /**
  * Test mailer.
@@ -25,43 +24,39 @@ class TestMailer extends Mailer
     {
         parent::__construct($config);
     }
-    public function sendTest($to)
+
+    public function sendTest($to, $from): void
     {
-        $sender = Configure::read('GmailEmailSend.SENDER');
-       
         $contentId = Text::uuid();
 
         $attachment =  WWW_ROOT . 'img/cake-logo.png';
 
         $this->setEmailFormat('html')
             ->setTo($to)
-            ->setFrom(...$sender)
-            ->setSubject('Test of the Gmail Send XOAUTH2 ' . Chronos::now('Australia/Melbourne')->toAtomString())
+            ->setFrom($from)
+            ->setSubject(
+                __(
+                    'Test of the Gmail Send XOAUTH2 {0}',
+                    Chronos::now('Australia/Melbourne')->toIso8601String()
+                )
+            )
             // config in app_local.php
-            ->setTransport('gmailApi')
+            // ->setTransport('gmailApi')
             ->setAttachments([
                 'screenshot.png' => [
                     'file' => $attachment,
                     'mimetype' => mime_content_type($attachment),
-                    'contentId' => $contentId
-                ]
+                    'contentId' => $contentId,
+                ],
             ])
-            // ->setTransport(new GmailApiTransport(['username' => $sender[0]]))
+            ->setTransport(new GmailApiTransport(['username' => $from]))
             ->viewBuilder()
             ->setTemplate('GmailEmailSend.gmail_api_template')
             ->setLayout('GmailEmailSend.gmail_api_layout')
-        
             ->setVars([
                 'one' => 'One var',
                 'two' => 'Two var',
-                'contentId' => $contentId
+                'contentId' => $contentId,
             ]);
-
-        /**
-         * @var array{headers: string, message: string}
-         */
-        $message = $this->deliver();
-
-        return $message;
     }
 }

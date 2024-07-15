@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * Copyright 2018 Google Inc.
  *
@@ -26,15 +28,16 @@ use Google\Service\Gmail;
 
 /**
  * Returns an authorized API client.
- * @return Client the authorized client object
+ *
+ * @return \Google\Client the authorized client object
  */
-function getClient()
+function getClient(): Client
 {
     $client = new Client();
     $client->setApplicationName('Gmail API PHP Quickstart');
     $client->setScopes([
         'https://www.googleapis.com/auth/gmail.addons.current.message.readonly',
-        'https://www.googleapis.com/auth/gmail.compose'
+        'https://www.googleapis.com/auth/gmail.compose',
     ]);
     $client->setAuthConfig('credentials.json');
     $client->setAccessType('offline');
@@ -77,16 +80,15 @@ function getClient()
         }
         file_put_contents($tokenPath, json_encode($client->getAccessToken()));
     }
+
     return $client;
 }
-
 
 // Get the API client and construct the service object.
 $client = getClient();
 $service = new Gmail($client);
 
-try{
-
+try {
     // Print the labels in the user's account.
     $user = 'me';
     $results = $service->users_labels->listUsersLabels($user);
@@ -99,9 +101,8 @@ try{
             printf("- %s\n", $label->getName());
         }
     }
-}
-catch(Exception $e) {
+} catch (Exception $e) {
     // TODO(developer) - handle error appropriately
-    echo 'Message: ' .$e->getMessage();
+    echo 'Message: ' . $e->getMessage();
 }
 // [END gmail_quickstart]

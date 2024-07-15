@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 
 namespace GmailEmailSend\Command;
@@ -12,7 +11,6 @@ use Cake\Console\ConsoleOptionParser;
 use Cake\Core\Configure;
 use Cake\Mailer\Mailer;
 use Cake\Utility\Text;
-use GmailEmailSend\Mailer\Transport\GmailApiTransport;
 
 /**
  * SendEmail command.
@@ -29,6 +27,7 @@ class SendEmailCommand extends Command
     public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
         $parser = parent::buildOptionParser($parser);
+
         return $parser;
     }
 
@@ -39,7 +38,7 @@ class SendEmailCommand extends Command
      * @param \Cake\Console\ConsoleIo $io The console io
      * @return int|null|void The exit code or null for success
      */
-    public function execute(Arguments $args, ConsoleIo $io)
+    public function execute(Arguments $args, ConsoleIo $io): int|null|null
     {
         $mailer = new Mailer([
             'log' => true,

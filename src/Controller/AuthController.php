@@ -1,15 +1,11 @@
 <?php
-
 declare(strict_types=1);
 
 namespace GmailEmailSend\Controller;
 
-use Cake\Chronos\Chronos;
-use Cake\Core\Configure;
 use Cake\Core\Exception\CakeException;
 use Cake\Event\EventInterface;
 use Cake\Log\LogTrait;
-use Cake\Mailer\Mailer;
 use Cake\Utility\Text;
 use GmailEmailSend\Mailer\TestMailer;
 use GmailEmailSend\Model\Table\GmailAuthTable;
@@ -133,9 +129,9 @@ class AuthController extends AppController
 
         $gmailUser->token = $client->getAccessToken();
 
-        if($this->table->save($gmailUser)) {
+        if ($this->table->save($gmailUser)) {
             $this->Flash->success('Gmail API auth token saved!');
-        };
+        }
 
         $this->set(compact('params'));
     }
@@ -226,16 +222,21 @@ class AuthController extends AppController
         $this->set(compact('entity'));
     }
 
-    public function test($id = null) {
-        if($this->getRequest()->is('POST')) {
+    public function test($id = null)
+    {
+        if ($this->getRequest()->is('POST')) {
             $data = $this->getRequest()->getData();
-            
+
             $mailer = new TestMailer([
                 'log' => true,
             ]);
 
-            $mailer->send('sendTest', [ 'to' => $data['to']] );
-         
+            $from = $this->table->find()
+                ->where(['id' => $id])
+                ->firstOrFail();
+
+            $mailer->send('sendTest', [ 'to' => $data['to'], 'from' => $from->email]);
+
             $list = Text::toList(array_keys($mailer->getMessage()->getTo()));
 
             $this->Flash->success('Message sent to ' . $list);

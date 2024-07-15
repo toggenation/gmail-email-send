@@ -5,7 +5,6 @@ namespace GmailEmailSend\Test\TestCase\Command;
 
 use Cake\Console\TestSuite\ConsoleIntegrationTestTrait;
 use Cake\TestSuite\TestCase;
-use GmailEmailSend\Command\SendEmailCommand;
 
 /**
  * GmailEmailSend\Command\SendEmailCommand Test Case

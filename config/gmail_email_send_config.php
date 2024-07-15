@@ -10,7 +10,7 @@ $config = [
             'className' => FileLog::class,
             'path' => LOGS,
             'file' => 'email',
-            'scopes' => ['email']
+            'scopes' => ['email'],
         ],
     ],
 ];

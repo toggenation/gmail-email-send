@@ -1,7 +1,7 @@
-<?php 
+<?php
 
 /**
- * @var App\View\AppView $this
+ * @var \App\View\AppView $this
  */
 ?>
 <h1>Templated example</h1>

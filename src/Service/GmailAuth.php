@@ -7,9 +7,9 @@ use Cake\Http\ServerRequest;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use GmailEmailSend\Model\Table\GmailAuthTable;
 use GmailEmailSend\Service\Traits\ErrorFormatterTrait;
-use Psr\Http\Message\UploadedFileInterface;
 use Google\Client;
 use Google\Service\Gmail;
+use Psr\Http\Message\UploadedFileInterface;
 
 class GmailAuth
 {
@@ -19,10 +19,9 @@ class GmailAuth
     // public GmailAuthTable $table;
 
     public function __construct(
-        public ServerRequest $request, 
+        public ServerRequest $request,
         public GmailAuthTable $table
-        )
-    {
+    ) {
         // $this->request->getFlash()->success("Yeah boy");
 
         // $this->table = $this->fetchTable('GmailEmailSend.GmailAuth');

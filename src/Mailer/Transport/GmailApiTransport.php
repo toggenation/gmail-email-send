@@ -4,8 +4,8 @@ declare(strict_types=1);
 namespace GmailEmailSend\Mailer\Transport;
 
 use Cake\Core\Exception\CakeException;
-use Cake\Mailer\Message;
 use Cake\Mailer\AbstractTransport;
+use Cake\Mailer\Message as CakeMessage;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Exception;
 use GmailEmailSend\Model\Table\GmailAuthTable;
@@ -38,14 +38,7 @@ class GmailApiTransport extends AbstractTransport
         $this->table = $this->fetchTable('GmailEmailSend.GmailAuth');
     }
 
-    protected function validateUser(): void
-    {
-        $this->table->find()
-            ->where(['email' => $this->gmailUser])
-            ->firstOrFail();
-    }
-
-    public function send(Message $message): array
+    public function send(CakeMessage $message): array
     {
         $strMessage = $this->messageAsString($message);
 
@@ -112,6 +105,7 @@ class GmailApiTransport extends AbstractTransport
 
         if ($client->isAccessTokenExpired()) {
             // Refresh the token if possible, else fetch a new one.
+
             if ($client->getRefreshToken()) {
                 $client->fetchAccessTokenWithRefreshToken($client->getRefreshToken());
 
@@ -119,8 +113,11 @@ class GmailApiTransport extends AbstractTransport
                     ->where(['email' => $this->getConfig('username')])
                     ->firstOrFail();
 
-                $user->token = $this->encrypt($client->getAccessToken());
+                $newAccessToken = $client->getAccessToken();
 
+                $user->token = $newAccessToken;
+
+                // save the new token
                 if ($this->table->save($user) === false) {
                     throw new Exception('Could not save updated token');
                 }
@@ -132,7 +129,7 @@ class GmailApiTransport extends AbstractTransport
         return $client;
     }
 
-    protected function messageAsString(Message $message): string
+    protected function messageAsString(CakeMessage $message): string
     {
         $this->checkRecipient($message);
 
@@ -154,7 +151,7 @@ class GmailApiTransport extends AbstractTransport
         return $headers . "\r\n\r\n" . $message;
     }
 
-    protected function _prepareMessage(Message $message): string
+    protected function _prepareMessage(CakeMessage $message): string
     {
         $lines = $message->getBody();
 
@@ -171,7 +168,7 @@ class GmailApiTransport extends AbstractTransport
         return implode("\r\n", $messages);
     }
 
-    protected function checkRecipient(Message $message): void
+    protected function checkRecipient(CakeMessage $message): void
     {
         if (
             $message->getTo() === []
