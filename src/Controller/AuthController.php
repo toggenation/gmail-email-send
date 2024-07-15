@@ -13,6 +13,7 @@ use GmailEmailSend\Mailer\TestMailer;
 use GmailEmailSend\Model\Table\GmailAuthTable;
 use GmailEmailSend\Service\GmailAuth;
 use GmailEmailSend\Service\Traits\ErrorFormatterTrait;
+use GmailEmailSend\Service\Traits\RedirectUriTrait;
 use Google\Client;
 use Google\Service\Gmail;
 
@@ -23,6 +24,7 @@ class AuthController extends AppController
 {
     use ErrorFormatterTrait;
     use LogTrait;
+    use RedirectUriTrait;
 
     // use DbFieldEncryptionTrait;
 
@@ -112,6 +114,8 @@ class AuthController extends AppController
         $client->setAuthConfig($gmailUser->credentials);
 
         $accessToken = $client->fetchAccessTokenWithAuthCode($params['code']);
+
+        $client->setRedirectUri($this->getRedirectUri());
 
         // Check to see if there was an error.
         if (array_key_exists('error', $accessToken)) {

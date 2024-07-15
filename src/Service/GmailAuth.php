@@ -5,9 +5,9 @@ namespace GmailEmailSend\Service;
 
 use Cake\Http\ServerRequest;
 use Cake\ORM\Locator\LocatorAwareTrait;
-use Cake\Routing\Router;
 use GmailEmailSend\Model\Table\GmailAuthTable;
 use GmailEmailSend\Service\Traits\ErrorFormatterTrait;
+use GmailEmailSend\Service\Traits\RedirectUriTrait;
 use Google\Client;
 use Google\Service\Gmail;
 use Psr\Http\Message\UploadedFileInterface;
@@ -16,6 +16,7 @@ class GmailAuth
 {
     use LocatorAwareTrait;
     use ErrorFormatterTrait;
+    use RedirectUriTrait;
 
     // public GmailAuthTable $table;
 
@@ -63,12 +64,7 @@ class GmailAuth
 
         $client->setState($state);
 
-        $redirectUri = Router::url([
-            'controller' => 'Auth',
-            'action' => 'code',
-        ], true);
-
-        $client->setRedirectUri($redirectUri);
+        $client->setRedirectUri($this->getRedirectUri());
 
         $client->setLoginHint($this->getUser($state)->get('email'));
 
