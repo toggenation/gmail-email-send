@@ -8,4 +8,6 @@
 <?= $one; ?><br>
 <?= $two; ?>
 
-<p style="background-color: blue; padding: 10px;"><?= $this->Html->tag('img', null, ['src' => 'cid:' . $contentId]);?></p>
+<p style="border-radius: 6px; background-color: blue; padding: 10px;">
+    <?= $this->Html->tag('img', null, ['src' => 'cid:' . $contentId]);?>
+</p>

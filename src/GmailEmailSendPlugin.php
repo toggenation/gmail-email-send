@@ -13,6 +13,7 @@ use Cake\Database\TypeFactory;
 use Cake\Http\MiddlewareQueue;
 use Cake\Http\ServerRequest;
 use Cake\I18n\Middleware\LocaleSelectorMiddleware;
+use Cake\Log\Log;
 use Cake\Routing\RouteBuilder;
 use GmailEmailSend\Database\Type\EncryptedType;
 use GmailEmailSend\Model\Table\GmailAuthTable;
@@ -38,6 +39,8 @@ class GmailEmailSendPlugin extends BasePlugin
         TypeFactory::map('encrypted', EncryptedType::class);
 
         Configure::load('GmailEmailSend.gmail_email_send_config');
+
+        Log::setConfig('email', Configure::consume('GmailEmailSend.Log.email'));
     }
 
     /**
