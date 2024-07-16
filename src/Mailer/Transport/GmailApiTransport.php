@@ -3,14 +3,13 @@ declare(strict_types=1);
 
 namespace GmailEmailSend\Mailer\Transport;
 
-use Cake\Core\Configure;
 use Cake\Core\Exception\CakeException;
 use Cake\Mailer\AbstractTransport;
 use Cake\Mailer\Message as CakeMessage;
 use Cake\ORM\Locator\LocatorAwareTrait;
-use Exception;
+use Cake\Routing\Router;
 use GmailEmailSend\Model\Table\GmailAuthTable;
-use Google\Client;
+use GmailEmailSend\Service\GmailAuth;
 use Google\Service\Gmail;
 use Google\Service\Gmail\Message as GmailMessage;
 
@@ -22,24 +21,24 @@ class GmailApiTransport extends AbstractTransport
 
     public GmailAuthTable $table;
 
-    protected string $applicationName;
+    public GmailAuth $auth;
+
+    protected string $appName;
 
     protected array $_defaultConfig = [
         'username' => 'ytoggen@gmail.com',
-        'applicationName' => 'Toggen Gmail API Email Send',
     ];
 
     public function __construct($config = [])
     {
         parent::__construct($config);
 
-        $this->applicationName = Configure::read('GmailEmailSend.applicationName')
-            ?? $this->getConfig('applicationName');
-
         $this->table = $this->fetchTable('GmailEmailSend.GmailAuth');
+
+        $this->auth = new GmailAuth(Router::getRequest(), $this->table);
     }
 
-    public function send(CakeMessage $message): array
+    public function createGmailMessage(CakeMessage $message): GmailMessage
     {
         $strMessage = $this->messageAsString($message);
 
@@ -47,7 +46,16 @@ class GmailApiTransport extends AbstractTransport
 
         $gmailMessage->setRaw(base64_encode($strMessage));
 
-        $client = $this->getClient();
+        return $gmailMessage;
+    }
+
+    public function send(CakeMessage $message): array
+    {
+        $gmailMessage = $this->createGmailMessage($message);
+
+        $client = $this->auth->getClient(
+            $this->getConfig('username')
+        );
 
         $service = new Gmail($client);
 
@@ -57,69 +65,6 @@ class GmailApiTransport extends AbstractTransport
             'message' => $message->getBodyString(),
             'headers' => $message->getHeadersString(),
         ];
-    }
-
-    protected function getTokenStoredInDb(): array
-    {
-        return $this->getUser()->get('token');
-    }
-
-    protected function getUser()
-    {
-        return $this->table->find()
-            ->where(['email' => $this->getConfig('username')])
-            ->firstOrFail();
-    }
-
-    protected function getCredentials(): array
-    {
-        return $this->getUser()->get('credentials');
-    }
-
-    protected function getClient()
-    {
-        $client = new Client();
-
-        $client->setApplicationName($this->applicationName);
-
-        $client->setScopes([
-            Gmail::GMAIL_SEND,
-        ]);
-
-        $credentials = $this->getCredentials();
-
-        $client->setAuthConfig($credentials);
-
-        $client->setAccessType('offline');
-
-        $client->setPrompt('select_account consent');
-
-        $token = $this->getTokenStoredInDb();
-
-        if ($token) {
-            $client->setAccessToken($token);
-        }
-
-        if ($client->isAccessTokenExpired()) {
-            // Refresh the token if possible, else fetch a new one.
-
-            if ($client->getRefreshToken()) {
-                $client->fetchAccessTokenWithRefreshToken($client->getRefreshToken());
-
-                $user = $this->getUser();
-
-                $user->token = $client->getAccessToken();
-
-                // save the new token
-                if ($this->table->save($user) === false) {
-                    throw new Exception('Could not save updated token');
-                }
-            } else {
-                throw new CakeException('Could not refresh the access/refresh token non-interactively');
-            }
-        }
-
-        return $client;
     }
 
     protected function messageAsString(CakeMessage $message): string

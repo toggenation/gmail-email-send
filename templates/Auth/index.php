@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @var \App\View\AppView $this
  */
@@ -12,7 +13,7 @@
                 <tr>
                     <th><?= $this->Paginator->sort('id') ?></th>
                     <th><?= $this->Paginator->sort('email') ?></th>
-                    <th><?= $this->Paginator->sort('created') ?></th>
+                    <th><?= $this->Paginator->sort('description') ?></th>
                     <th><?= $this->Paginator->sort('modified') ?></th>
                     <th class="actions"><?= __('Actions') ?></th>
                 </tr>
@@ -22,7 +23,7 @@
                     <tr>
                         <td><?= $this->Number->format($gmailAuth->id) ?></td>
                         <td><?= h($gmailAuth->email) ?></td>
-                        <td><?= h($gmailAuth->created) ?></td>
+                        <td><?= h($gmailAuth->description) ?></td>
                         <td><?= h($gmailAuth->modified) ?></td>
                         <td class="actions">
                             <?= $this->Html->link(__('View'), ['action' => 'view', $gmailAuth->id]) ?>

@@ -1,12 +1,12 @@
 <?php
 
+use Cake\Utility\Inflector;
+
 ?>
 
 <dl>
-    <dt>Code</dt>
-    <dd><?php echo $params['code']; ?></dd>
-    <dt>Scope</dt>
-    <dd><?php echo implode('<br>', explode(' ', $params['scope'])); ?></dd>
-    <dt>State</dt>
-    <dd><?php echo implode('<br>', explode(' ', $params['state'])); ?></dd>
+    <?php foreach ($params as $key => $value) : ?>
+        <dt><?= Inflector::humanize($key); ?></dt>
+        <dd><?= h($value); ?></dd>
+    <?php endforeach; ?>
 </dl>

@@ -147,7 +147,9 @@ class GmailEmailSendPlugin extends BasePlugin
     public function services(ContainerInterface $container): void
     {
         $container->delegate(
-            new ReflectionContainer(Configure::read('debug'))
+            new ReflectionContainer(
+                Configure::read('debug')
+            )
         );
 
         // Add your services here

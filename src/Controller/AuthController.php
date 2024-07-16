@@ -230,6 +230,11 @@ class AuthController extends AppController
 
     public function test($id = null)
     {
+
+        $from = $this->table->find()
+            ->where(['id' => $id])
+            ->firstOrFail();
+
         if ($this->getRequest()->is('POST')) {
             $data = $this->getRequest()->getData();
 
@@ -249,15 +254,13 @@ class AuthController extends AppController
                 'log' => true,
             ]);
 
-            $from = $this->table->find()
-                ->where(['id' => $id])
-                ->firstOrFail();
-
             $mailer->send('sendTest', ['to' => $to, 'from' => [$from->email, $from->description]]);
 
             $this->Flash->success(__('Message sent to {0} from {1}', $to, $from->email));
 
             return $this->redirect(['action' => 'index']);
         }
+
+        $this->set(compact('from'));
     }
 }
