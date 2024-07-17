@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace GmailEmailSend\Controller;
@@ -103,28 +104,10 @@ class AuthController extends AppController
             ->where(['state' => $params['state']])
             ->firstOrFail();
 
-        $client = new Client();
-
-        $client->setApplicationName(Configure::read('GmailEmailSend.applicationName'));
-
-        $client->setScopes([
-            Gmail::GMAIL_SEND,
-        ]);
-
-        $client->setAuthConfig($gmailUser->credentials);
-
-        $client->setRedirectUri($this->getRedirectUri());
-
-        $accessToken = $client->fetchAccessTokenWithAuthCode($params['code']);
-
-        // Check to see if there was an error.
-        if (array_key_exists('error', $accessToken)) {
-            throw new CakeException(join(', ', $accessToken));
-        }
-
-        $client->setAccessToken($accessToken);
-
-        $gmailUser->token = $client->getAccessToken();
+        $gmailUser->token = $auth->getToken(
+            credentials: $gmailUser->credentials,
+            code: $params['code']
+        );
 
         if ($this->table->save($gmailUser)) {
             $this->Flash->success('Gmail API auth token saved!');

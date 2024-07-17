@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace GmailEmailSend\Orm;
@@ -9,7 +10,8 @@ class Table extends \Cake\ORM\Table
 {
     public function getSchema(): TableSchemaInterface
     {
-        return parent::getSchema()->setColumnType('token', 'encrypted')
+        return parent::getSchema()
+            ->setColumnType('token', 'encrypted')
             ->setColumnType('credentials', 'encrypted');
     }
 }

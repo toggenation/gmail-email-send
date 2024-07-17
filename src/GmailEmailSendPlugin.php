@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace GmailEmailSend;
@@ -73,35 +74,39 @@ class GmailEmailSendPlugin extends BasePlugin
                     '/',
                     ['controller' => 'Auth', 'action' => 'index']
                 );
-                $builder->connect(
-                    '/view/{id}',
-                    ['controller' => 'Auth', 'action' => 'view'],
-                    ['id' => '\d+', 'pass' => ['id']]
-                );
 
                 $builder->connect(
-                    '/test/{id}',
-                    ['controller' => 'Auth', 'action' => 'test',],
-                    ['id' => '\d+', 'pass' => ['id']]
+                    '/{action}/*',
+                    ['controller' => 'Auth']
                 );
-                $builder->connect(
-                    '/get-token',
-                    ['controller' => 'Auth', 'action' => 'getToken']
-                );
-                $builder->connect(
-                    '/code',
-                    ['controller' => 'Auth', 'action' => 'code']
-                );
-                $builder->connect(
-                    '/change-credentials/{id}',
-                    ['controller' => 'Auth', 'action' => 'changeCredentials'],
-                    ['id' => '\d+', 'pass' => ['id']]
-                );
-                $builder->connect(
-                    '/delete/{id}',
-                    ['controller' => 'Auth', 'action' => 'delete'],
-                    ['id' => '\d+', 'pass' => ['id']]
-                );
+                // $builder->connect(
+                //     '/view/{id}',
+                //     ['controller' => 'Auth', 'action' => 'view'],
+                //     ['id' => '\d+', 'pass' => ['id']]
+                // );
+                // $builder->connect(
+                //     '/test/{id}',
+                //     ['controller' => 'Auth', 'action' => 'test',],
+                //     ['id' => '\d+', 'pass' => ['id']]
+                // );
+                // $builder->connect(
+                //     '/get-token',
+                //     ['controller' => 'Auth', 'action' => 'getToken']
+                // );
+                // $builder->connect(
+                //     '/code',
+                //     ['controller' => 'Auth', 'action' => 'code']
+                // );
+                // $builder->connect(
+                //     '/change-credentials/{id}',
+                //     ['controller' => 'Auth', 'action' => 'changeCredentials'],
+                //     ['id' => '\d+', 'pass' => ['id']]
+                // );
+                // $builder->connect(
+                //     '/delete/{id}',
+                //     ['controller' => 'Auth', 'action' => 'delete'],
+                //     ['id' => '\d+', 'pass' => ['id']]
+                // );
             }
         );
         parent::routes($routes);

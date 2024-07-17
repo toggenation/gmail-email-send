@@ -1,9 +1,11 @@
 <?php
+
 declare(strict_types=1);
 
 namespace GmailEmailSend\Service;
 
 use Cake\Core\Configure;
+use Cake\Core\Exception\CakeException;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Http\ServerRequest;
 use Cake\ORM\Locator\LocatorAwareTrait;
@@ -72,17 +74,9 @@ class GmailAuth
 
     public function getClient($gmailUser): Client
     {
-        $client = new Client();
-
-        $client->setApplicationName($this->getAppName());
-
-        $client->setScopes([
-            Gmail::GMAIL_SEND,
-        ]);
-
         $credentials = $this->getCredentials($gmailUser);
 
-        $client->setAuthConfig($credentials);
+        $client = $this->setClient($credentials);
 
         $client->setAccessType('offline');
 
@@ -136,7 +130,7 @@ class GmailAuth
         );
     }
 
-    public function authUrl(array $credentials, string $state): string
+    public function setClient($credentials)
     {
         $client = new Client();
 
@@ -149,6 +143,13 @@ class GmailAuth
         $client->setAuthConfig($credentials);
 
         $client->setRedirectUri($this->getRedirectUri());
+
+        return $client;
+    }
+
+    public function authUrl(array $credentials, string $state): string
+    {
+        $client = $this->setClient($credentials);
 
         $client->setAccessType('offline');
 
@@ -184,5 +185,23 @@ class GmailAuth
         $errors = strlen($errors) > 0 ? $errors : false;
 
         return $errors;
+    }
+
+    public function getToken(mixed $credentials, string $code): array
+    {
+        $client = $this->setClient($credentials);
+
+        $client->setRedirectUri($this->getRedirectUri());
+
+        $accessToken = $client->fetchAccessTokenWithAuthCode($code);
+
+        // Check to see if there was an error.
+        if (array_key_exists('error', $accessToken)) {
+            throw new CakeException(join(', ', $accessToken));
+        }
+
+        $client->setAccessToken($accessToken);
+
+        return  $client->getAccessToken();
     }
 }
