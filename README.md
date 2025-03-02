@@ -107,6 +107,11 @@ Run the database migration to create the gmail_auth table
 ```sh
  bin/cake migrations migrate -p GmailEmailSend
 ```
+Make sure you dumpautoload
+
+```
+composer dumpautoload
+```
 
 Start the dev server
 
