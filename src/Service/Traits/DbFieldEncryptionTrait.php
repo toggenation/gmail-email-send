@@ -32,7 +32,6 @@ trait DbFieldEncryptionTrait
             $decrypted,
             // array return type
             associative: true,
-            flags: JSON_OBJECT_AS_ARRAY | JSON_INVALID_UTF8_IGNORE
         );
 
         return $result;

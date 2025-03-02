@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace GmailEmailSend\Service\Traits;
@@ -11,10 +12,18 @@ trait RedirectUriTrait
 {
     protected function getRedirectUri()
     {
-        $redirectUri = Router::url([
+        $redirectArray = [
             'controller' => 'Auth',
             'action' => 'code',
-        ], true);
+        ];
+
+        if (PHP_SAPI === 'cli') {
+            $redirectArray = $redirectArray + [
+                '_host' => 'localhost',
+                'plugin' => 'GmailEmailSend'
+            ];
+        }
+        $redirectUri = Router::url($redirectArray, true);
 
         Log::write(LogLevel::INFO, "Redirect URI set to $redirectUri");
 

@@ -32,7 +32,7 @@ On the Google Cloud Console you need to:
 Install CakePHP 5.x+
 
 ```sh
-composer create-project --prefer-dist cakephp/app:~5.0 gmail-oauth-send
+composer create-project --prefer-dist cakephp/app:~5.0 gmail-test
 ```
 
 Add Gmail PHP
@@ -81,6 +81,7 @@ Add a database connection and the encryption config
  'Security' => [
         'salt' => env('SECURITY_SALT', 'ec3e8fa8b3fa8g414fa1a704d209007a9c85406a126fe2910885826f2c6e4d2c'),
         // add this CLIENT_SECRET_KEY with a __SALT___ template
+        // this will be the encryption / decryption key for any encrypted DB fields
         'CLIENT_SECRET_KEY' => '__SALT__'
     ],
 
@@ -109,7 +110,7 @@ Run the database migration to create the gmail_auth table
 ```
 Make sure you dumpautoload
 
-```
+```sh
 composer dumpautoload
 ```
 
