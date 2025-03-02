@@ -17,7 +17,7 @@ trait DbFieldEncryptionTrait
         );
     }
 
-    public function decrypt($encrypted): ?array
+    public function decrypt($encrypted): mixed
     {
         if (is_null($encrypted)) {
             return null;
@@ -34,9 +34,7 @@ trait DbFieldEncryptionTrait
             associative: true,
             flags: JSON_OBJECT_AS_ARRAY | JSON_INVALID_UTF8_IGNORE
         );
-        if (is_string($result)) {
-            dd([$result, $encrypted]);
-        }
+
         return $result;
     }
 }
