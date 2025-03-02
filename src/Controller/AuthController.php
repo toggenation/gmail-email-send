@@ -199,6 +199,8 @@ class AuthController extends AppController
 
             $entity = $this->table->patchEntity($entity, $data);
 
+            // $entity->token = '';
+
             if ($this->table->save($entity)) {
                 $authUrl = $auth->authUrl($credentialContents, $entity->state);
 

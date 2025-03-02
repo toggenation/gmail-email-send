@@ -25,6 +25,7 @@ class AddGmailAuthTable extends AbstractMigration
             ->addColumn('state', 'string', ['default' => null])
             ->addColumn('token', 'binary', [
                 'limit' => 1024,
+                'null' => true,
                 'default' => null,
             ])
             ->addIndex('email', ['unique' => true])
