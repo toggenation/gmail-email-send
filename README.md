@@ -127,7 +127,7 @@ Once you upload a valid client_secret.json you should be redirected to Googles C
 
 The contents of the client_secret.json file will be encrypted and stored in the gmail_auth `credentials` field
 
-When you have consented and been redirected back to http://locahost:8765/gmail/code the resulting code will be used to obtain a "access_token" and "refresh_token" which will be stored in the gmail_auth table `token` field
+When you have consented and been redirected back to http://localhost:8765/gmail/code the resulting code will be used to obtain a "access_token" and "refresh_token" which will be stored in the gmail_auth table `token` field
 
 Example of using the mail send ability
 
