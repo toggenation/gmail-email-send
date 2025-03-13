@@ -14,18 +14,18 @@ The Google Cloud Platform console layout has changed so this is a general outlin
 3. Go to APIs & Services => Enable APIs & Services => Enable APIs and Services
 4. Search for GMail API click on it and select the Enable button
 5. Select OAuth Consent Screen
-6. Create an Oauth consent screen:\
-        External User Type (Internal isn't available for non-paid accounts)\
-        **App Name:** Toggenation Email Send\
-        **User support email:** toggen.yt@gmail.com\
-        **Developer contact information:** toggen.yt@gmail.com\
-        **Add Or Remove Scopes:** gmail.compose (this will appear under Your Restricted Scopes)\
+6. Create an Oauth consent screen:<br>
+        External User Type (Internal isn't available for non-paid accounts)<br>
+        **App Name:** Toggenation Email Send<br>
+        **User support email:** toggen.yt@gmail.com<br>
+        **Developer contact information:** toggen.yt@gmail.com<br>
+        **Add Or Remove Scopes:** gmail.compose (this will appear under Your Restricted Scopes)<br>
         **Add a Test User:** toggen.yt@gmail.com
-7. Create some Oauth Credentials:\
-        **Credential Type:** Oauth Client ID\
-        **Application Type:** Web application\
-        **Name:** leave default or change if you want\
-        **Authorized redirect URIs:** `http://localhost:8765/gmail/code`\
+7. Create some Oauth Credentials:<br>
+        **Credential Type:** Oauth Client ID<br>
+        **Application Type:** Web application<br>
+        **Name:** leave default or change if you want<br>
+        **Authorized redirect URIs:** `http://localhost:8765/gmail/code`<br>
             (point to you CakePHP dev env and add a domain .e.g https://example.com/gmail/code if you want to use it for real)
 8. Download the `client_secrets*.json` credentials file
 
