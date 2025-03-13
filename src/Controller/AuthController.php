@@ -1,11 +1,8 @@
 <?php
-
 declare(strict_types=1);
 
 namespace GmailEmailSend\Controller;
 
-use Cake\Core\Configure;
-use Cake\Core\Exception\CakeException;
 use Cake\Event\EventInterface;
 use Cake\Log\LogTrait;
 use Cake\Utility\Text;
@@ -15,8 +12,6 @@ use GmailEmailSend\Model\Table\GmailAuthTable;
 use GmailEmailSend\Service\GmailAuth;
 use GmailEmailSend\Service\Traits\ErrorFormatterTrait;
 use GmailEmailSend\Service\Traits\RedirectUriTrait;
-use Google\Client;
-use Google\Service\Gmail;
 
 /**
  * Code Controller

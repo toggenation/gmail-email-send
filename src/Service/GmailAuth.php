@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 
 namespace GmailEmailSend\Service;
@@ -202,6 +201,6 @@ class GmailAuth
 
         $client->setAccessToken($accessToken);
 
-        return  $client->getAccessToken();
+        return $client->getAccessToken();
     }
 }
