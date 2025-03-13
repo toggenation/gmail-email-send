@@ -6,36 +6,36 @@ This is an alpha repo.
 
 ## Installation
 
-On the Google Cloud Console you need to:
+The Google Cloud Platform console layout has changed so this is a general outline of what you need to achieve:
 
 1. Login to the [Google Cloud Console](https://console.cloud.google.com) (in this example I'm using toggen.yt@gmail.com)
-2. Create a New project
-4. Project Name: Gmail Email Send Project
-2. Got APIs & Services => Enable APIs & Services => Enable APIsS AND SERVICES
+2. Create a New project:\
+        **Project Name:** Gmail Email Send Project
+3. Go to APIs & Services => Enable APIs & Services => Enable APIs and Services
 4. Search for GMail API click on it and select the Enable button
-2. Select OAuth consent Screen
-5. Create an Oauth consent screen:\
+5. Select OAuth Consent Screen
+6. Create an Oauth consent screen:\
         External User Type (Internal isn't available for non-paid accounts)\
         **App Name:** Toggenation Email Send\
         **User support email:** toggen.yt@gmail.com\
         **Developer contact information:** toggen.yt@gmail.com\
         **Add Or Remove Scopes:** gmail.compose (this will appear under Your Restricted Scopes)\
         **Add a Test User:** toggen.yt@gmail.com
-3. Create some Oauth Credentials:\
+7. Create some Oauth Credentials:\
         **Credential Type:** Oauth Client ID\
         **Application Type:** Web application\
         **Name:** leave default or change if you want\
         **Authorized redirect URIs:** `http://localhost:8765/gmail/code`\
             (point to you CakePHP dev env and add a domain .e.g https://example.com/gmail/code if you want to use it for real)
-4. Download the `client_secrets*.json` credentials file
+8. Download the `client_secrets*.json` credentials file
 
-Install CakePHP 5.x+
+**Install CakePHP 5.x+**
 
 ```sh
 composer create-project --prefer-dist cakephp/app:~5.0 gmail-test
 ```
 
-Add Gmail PHP
+**Add Gmail PHP**
 Add an `extra` key to `$project_root/composer.json`
 
 ```json
@@ -49,13 +49,13 @@ Add an `extra` key to `$project_root/composer.json`
 
 ```
 
-Install `google/apiclient`
+**Install `google/apiclient`**
 
 ```sh
 composer require  "google/apiclient"
 ```
 
-Install this plugin
+**Install this plugin**
 ```sh
 cd $project_root/plugins
 
@@ -63,14 +63,15 @@ git clone https://github.com/toggenation/gmail-email-send.git GmailEmailSend
 
 ```
 
-Load the plugin
+**Load the plugin**
 ```sh
 
 bin/cake plugin load GmailEmailSend
 ```
 
-Add a database connection and the encryption config
+**Add a database connection and the encryption config. **
 
+**Modify `app_local.php`**
 ```php
 // config/app_local.php
 // sqlite
@@ -87,7 +88,7 @@ Add a database connection and the encryption config
 
 ```
 
-Run composer run post-install-cmd to replace `__SALT__` with key
+Run `composer` to replace `__SALT__` with key
 
 ```sh
 composer run post-install-cmd
@@ -103,7 +104,7 @@ composer run post-install-cmd
     ],
 ```
 
-Run the database migration to create the gmail_auth table
+**Run the database migration in the plugin to create the gmail_auth table**
 
 ```sh
  bin/cake migrations migrate -p GmailEmailSend
@@ -114,7 +115,7 @@ Make sure you dumpautoload
 composer dumpautoload
 ```
 
-Start the dev server
+**Start the dev server**
 
 ```sh
 bin/cake server
@@ -122,13 +123,13 @@ bin/cake server
 
 Connect to `http://localhost:8765/gmail/get-token`
 
-Enter a gmail username (toggen.yt@gmail.com) and upload the `client_secret*.json` you created in Google Cloud Console
+Enter a gmail username (toggen.yt@gmail.com) and upload the `client_secret*.json` you created and downloaded from the Google Cloud Platform Console
 
 Once you upload a valid client_secret.json you should be redirected to Googles Consent screen so you can allow Gmail API access to send email on behalf of your email account. 
 
 The contents of the client_secret.json file will be encrypted and stored in the gmail_auth `credentials` field
 
-When you have consented and been redirected back to http://localhost:8765/gmail/code the resulting code will be used to obtain a "access_token" and "refresh_token" which will be stored in the gmail_auth table `token` field
+When you have consented and been redirected back to `http://locahost:8765/gmail/code` the resulting code will be used to obtain a "access_token" and "refresh_token" which will be stored in the gmail_auth table `token` field
 
 Example of using the mail send ability
 
