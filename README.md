@@ -6,6 +6,8 @@ This is an alpha repo.
 
 ## Installation
 
+### Google Cloud Platform
+
 The Google Cloud Platform console layout has changed so this is a general outline of what you need to achieve:
 
 1. Login to the [Google Cloud Console](https://console.cloud.google.com) (in this example I'm using toggen.yt@gmail.com)
@@ -29,7 +31,7 @@ The Google Cloud Platform console layout has changed so this is a general outlin
             (point to you CakePHP dev env and add a domain .e.g https://example.com/gmail/code if you want to use it for real)
 8. Download the `client_secrets*.json` credentials file
 
-**Install CakePHP 5.x+**
+### Install CakePHP 5.x+
 
 ```sh
 composer create-project --prefer-dist cakephp/app:~5.0 gmail-test
@@ -69,7 +71,7 @@ git clone https://github.com/toggenation/gmail-email-send.git GmailEmailSend
 bin/cake plugin load GmailEmailSend
 ```
 
-**Add a database connection and the encryption config. **
+**Add a database connection and the encryption config.**
 
 **Modify `app_local.php`**
 ```php
